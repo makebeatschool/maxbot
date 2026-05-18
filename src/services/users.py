@@ -1,8 +1,7 @@
 import os
 import json
-from datetime import datetime, timedelta, timezone
 from config import FILE_PATH, file_lock
-from services.amoservice import find_contact_by_phone
+from services.amoservice import get_trial_datetime_by_phone
 
 
 def load_users():
@@ -29,7 +28,7 @@ def save_users(data):
 async def add_user(user_id: int, chat_id: int, first_name: str = None,
                    last_name: str = None, username: str = None, phone:str = None, payload: str = None):
     async with file_lock:
-        # print(find_contact_by_phone("89521082823"))
+        send_message_date = get_trial_datetime_by_phone(phone)
         users = load_users()
         key = str(user_id)
         if key in users:
@@ -41,7 +40,7 @@ async def add_user(user_id: int, chat_id: int, first_name: str = None,
             "last_name": last_name,
             "username": username,
             "payload": payload,
-            "send_message": (datetime.now(timezone.utc) + timedelta(seconds=5)).isoformat()
+            "send_message": send_message_date
         }
         save_users(users)
         return True
