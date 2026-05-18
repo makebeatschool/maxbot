@@ -4,6 +4,7 @@ from core.bot import bot, dp
 import handlers.start
 import handlers.callbacks
 import handlers.messages
+import handlers.blocked
 from services.reminder import reminder_worker
 
 

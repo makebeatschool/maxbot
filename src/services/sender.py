@@ -8,8 +8,11 @@ async def safe_send(chat_id: int, text: str, attachments=None):
             text=text,
             attachments=attachments
         )
+    # это надо починить чобы не было обшей ошибки (пока хз как)
     except MaxApiError as e:
-        if getattr(e, "code", None) == 404:
+        error_code = getattr(e, "code", None)
+        raw = getattr(e, "raw", {}) or {}
+        if ( error_code == 404 or raw.get("code") == "chat.not.found" ):
             return None
         raise
 

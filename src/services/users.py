@@ -25,6 +25,17 @@ def save_users(data):
         os.fsync(f.fileno())
     os.replace(tmp_path, FILE_PATH)
 
+async def remove_user_by_chat_id(chat_id: int):
+    async with file_lock:
+        users = load_users()
+        keys_to_delete = [
+            key for key, user in users.items()
+            if user.get("chat_id") == chat_id
+        ]
+        for key in keys_to_delete:
+            users.pop(key, None)
+        save_users(users)
+
 async def add_user(user_id: int, chat_id: int, first_name: str = None,
                    last_name: str = None, username: str = None, phone:str = None, payload: str = None):
     async with file_lock:
