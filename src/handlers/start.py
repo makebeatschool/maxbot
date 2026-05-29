@@ -1,5 +1,5 @@
 from core.bot import dp
-from config import title_start_btn
+from texts import TITLE_START_BTN
 from keyboards.start import start_keyboard
 from services.sender import safe_send
 
@@ -7,6 +7,6 @@ from services.sender import safe_send
 async def on_bot_started(event):
     await safe_send(
         chat_id=event.chat_id,
-        text=title_start_btn,
+        text=TITLE_START_BTN,
         attachments=[start_keyboard()]
     )

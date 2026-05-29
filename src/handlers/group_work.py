@@ -1,6 +1,6 @@
 from maxapi.types import UserAdded
-from core.bot import dp, router
-from config import ADDED_TO_GROUP_TEXT
+from core.bot import dp
+from texts import ADDED_TO_GROUP_TEXT
 from keyboards.start import start_from_group_keyboard
 
 @dp.user_added()
@@ -26,7 +26,6 @@ async def on_user_removed(event):
 
 # @router.message_created()
 # async def on_message(event):
-
 #     user = event.from_user
 #     text = event.message.body.text
 #     await event.bot.send_message(

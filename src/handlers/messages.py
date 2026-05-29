@@ -1,11 +1,10 @@
 from maxapi.types import MessageCreated
 from core.bot import dp
-from config import text_start_btn, check_list
+from texts import TEXT_START_BTN, CHECK_LIST
 
 
 @dp.message_created()
 async def on_message(event: MessageCreated):
     text = (event.message.body.text or "").strip()
-
-    if text == text_start_btn:
-        await event.message.answer(check_list)
+    if text == TEXT_START_BTN:
+        await event.message.answer(CHECK_LIST)

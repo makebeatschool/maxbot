@@ -1,8 +1,8 @@
 from datetime import datetime, timedelta
 import os
 import json
-from config import FILE_PATH, file_lock
-from services.amoservice import get_trial_datetime_by_phone
+from config import FILE_PATH, file_lock, DAYS, MOSCOW
+# from services.amoservice import get_trial_datetime_by_phone
 
 
 def load_users():
@@ -49,7 +49,8 @@ async def add_user(user_id: int, chat_id: int, first_name: str = None,
             "chat_id": chat_id,
             "first_name": first_name,
             "last_name": last_name,
-            "username": username,
+            # "username": username,
+            "day": "None-None",
             "send_message": None
         }
         save_users(users)
@@ -57,29 +58,90 @@ async def add_user(user_id: int, chat_id: int, first_name: str = None,
 
 
 async def set_reminder_time(user_id: int, day: str = None, time: str = None):
+    flag = "created"
     async with file_lock:
         users = load_users()
         key = str(user_id)
-        if key not in users:
-            return False
-        now = datetime.now()
-        current = users[key].get("send_message")
-        dt = (
-            datetime.strptime(current, "%d.%m.%Y %H:%M")
-            if current else
-            now.replace(second=0, microsecond=0)
-        )
+        if key not in users: return "error"
+        weekdays = [value for _, value in DAYS]
+        current = users[key].get("day", "None-None")
+        prev_day, prev_time = current.split("-")
+        current_day, current_time = prev_day, prev_time
         if day:
-            d = datetime.strptime(day, "%d.%m.%Y")
-            dt = dt.replace(year=d.year, month=d.month, day=d.day)
+            if day not in weekdays: return "error"
+            current_day = day
+            if prev_day != "None": flag = "updated"
         if time:
-            h, m = map(int, time.split(":"))
-            dt = dt.replace(hour=h, minute=m)
-        if not current:
-            if day and not time:
-                dt = dt.replace(hour=0, minute=0)
-            elif time and not day:
-                pass
-        users[key]["send_message"] = dt.strftime("%d.%m.%Y %H:%M")
+            try:
+                h, m = map(int, time.split(":"))
+                if not (0 <= h <= 23 and 0 <= m <= 59): return "error"
+                current_time = f"{h:02d}:{m:02d}"
+                if prev_time != "None": flag = "updated"
+            except: return "error"
+        users[key]["day"] = f"{current_day}-{current_time}"
+        save_users(users)
+    await calculate_next_send_time(user_id)
+    return flag
+
+
+async def calculate_next_send_time(user_id):
+    async with file_lock:
+        users = load_users()
+        key = str(user_id)
+        if key not in users: return False
+        user = users[key]
+        day = user.get("day", "None-None")
+        if day == "None-None": return False
+        d, t = day.split("-")
+        if d == "None" or t == "None": return False
+        weekdays = [value for _, value in DAYS]
+        try:
+            h, m = map(int, t.split(":"))
+        except: return False
+        now = datetime.now()
+        target_weekday = weekdays.index(d)
+        diff = (target_weekday - now.weekday()) % 7
+        lesson_date = now.date() + timedelta(days=diff)
+        lesson_dt = datetime.combine(lesson_date, datetime.min.time()).replace(hour=h, minute=m)
+        delta = lesson_dt - now
+        if delta < timedelta(minutes=15):
+            lesson_dt += timedelta(days=7)
+            delta = lesson_dt - now
+        if delta >= timedelta(hours=24):
+            send_time = lesson_dt - timedelta(hours=24)
+        elif delta >= timedelta(hours=1):
+            send_time = lesson_dt - timedelta(hours=1)
+        else:
+            send_time = lesson_dt - timedelta(minutes=15)
+        user["send_message"] = send_time.replace(tzinfo=MOSCOW).isoformat()
         save_users(users)
         return True
+    
+# не используется (сделал а удалять жалко для календаря )
+# async def set_reminder_time(user_id: int, day: str = None, time: str = None):
+#     async with file_lock:
+#         users = load_users()
+#         key = str(user_id)
+#         if key not in users:
+#             return False
+#         now = datetime.now()
+#         current = users[key].get("send_message")
+#         dt = (
+#             datetime.strptime(current, "%d.%m.%Y %H:%M")
+#             if current else
+#             now.replace(second=0, microsecond=0)
+#         )
+#         if day:
+#             d = datetime.strptime(day, "%d.%m.%Y")
+#             dt = dt.replace(year=d.year, month=d.month, day=d.day)
+#         if time:
+#             h, m = map(int, time.split(":"))
+#             dt = dt.replace(hour=h, minute=m)
+#         if not current:
+#             if day and not time:
+#                 dt = dt.replace(hour=0, minute=0)
+#             elif time and not day:
+#                 pass
+#         users[key]["send_message"] = dt.strftime("%d.%m.%Y %H:%M")
+#         save_users(users)
+#         return True

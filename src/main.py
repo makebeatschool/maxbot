@@ -3,7 +3,6 @@ from core.bot import bot, dp
 
 import handlers.start
 import handlers.callbacks
-import handlers.remindertime_callback
 import handlers.group_work
 import handlers.calendar
 import handlers.messages
