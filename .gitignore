@@ -2,4 +2,5 @@ __pycache__/
 venv/
 env.py
 teory.txt
-users.json
+src/data/users.json
+src/data/users.json.tmp

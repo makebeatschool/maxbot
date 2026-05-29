@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import os
 import json
 from config import FILE_PATH, file_lock
@@ -15,7 +16,6 @@ def load_users():
             return json.loads(content)
     except (json.JSONDecodeError, OSError):
         return {}
-
 
 def save_users(data):
     tmp_path = FILE_PATH + ".tmp"
@@ -37,9 +37,9 @@ async def remove_user_by_chat_id(chat_id: int):
         save_users(users)
 
 async def add_user(user_id: int, chat_id: int, first_name: str = None,
-                   last_name: str = None, username: str = None, phone:str = None, payload: str = None):
+                   last_name: str = None, username: str = None,):
     async with file_lock:
-        send_message_date = get_trial_datetime_by_phone(phone)
+        # lesson_time = get_trial_datetime_by_phone(phone)
         users = load_users()
         key = str(user_id)
         if key in users:
@@ -50,8 +50,36 @@ async def add_user(user_id: int, chat_id: int, first_name: str = None,
             "first_name": first_name,
             "last_name": last_name,
             "username": username,
-            "payload": payload,
-            "send_message": send_message_date
+            "send_message": None
         }
+        save_users(users)
+        return True
+
+
+async def set_reminder_time(user_id: int, day: str = None, time: str = None):
+    async with file_lock:
+        users = load_users()
+        key = str(user_id)
+        if key not in users:
+            return False
+        now = datetime.now()
+        current = users[key].get("send_message")
+        dt = (
+            datetime.strptime(current, "%d.%m.%Y %H:%M")
+            if current else
+            now.replace(second=0, microsecond=0)
+        )
+        if day:
+            d = datetime.strptime(day, "%d.%m.%Y")
+            dt = dt.replace(year=d.year, month=d.month, day=d.day)
+        if time:
+            h, m = map(int, time.split(":"))
+            dt = dt.replace(hour=h, minute=m)
+        if not current:
+            if day and not time:
+                dt = dt.replace(hour=0, minute=0)
+            elif time and not day:
+                pass
+        users[key]["send_message"] = dt.strftime("%d.%m.%Y %H:%M")
         save_users(users)
         return True

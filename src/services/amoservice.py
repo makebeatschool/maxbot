@@ -25,10 +25,10 @@ def _parse_group_name(value: str) -> datetime | None:
 
 def _fallback_tomorrow_16() -> str:
     dt = datetime.now(TZ).replace(hour=16, minute=0, second=0, microsecond=0) + timedelta(days=1)
-    return dt.isoformat()
+    return dt
 
 def _plus_one_minute() -> str:
-    return (datetime.now(timezone.utc) + timedelta(minutes=1)).isoformat()
+    return (datetime.now(timezone.utc) + timedelta(minutes=1))
 
 def _safe_get_json(url: str, **kwargs) -> dict | None:
     try:
@@ -80,5 +80,6 @@ def get_trial_datetime_by_phone(phone: str) -> str:
     now_utc = datetime.now(timezone.utc)
     if dt.astimezone(timezone.utc) < now_utc:
         return _plus_one_minute()
-    dt = dt - timedelta(hours=3)
-    return dt.astimezone(timezone.utc).isoformat()
+    # dt = dt - timedelta(hours=3)
+    # return dt.astimezone(timezone.utc).isoformat()
+    return dt.astimezone(timezone.utc)

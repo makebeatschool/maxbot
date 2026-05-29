@@ -3,13 +3,17 @@ from core.bot import bot, dp
 
 import handlers.start
 import handlers.callbacks
+import handlers.remindertime_callback
+import handlers.group_work
+import handlers.calendar
 import handlers.messages
 import handlers.blocked
 from services.reminder import reminder_worker
+from services.preload_file import preload_file
 
 
 async def main():
-    await handlers.callbacks.preload_file(bot)
+    await preload_file(bot)
     asyncio.create_task(reminder_worker(bot))
     try:
         await dp.start_polling(bot)
@@ -25,5 +29,16 @@ if __name__ == "__main__":
         print("Bot stopped")
 
 
-                # name = user.get("first_name") or "Здравствуйте"
-                # text = f"{name}, напоминание о пробном занятии. Ждём вас 🤍"
+# 1) Создать в боте функцию автоматического напоминания о пробном занятии 
+# за 24 часа, 1 час и 15 минут по мск времени.
+
+# 2) Как только куратор (или менеджер) добавляет ученика в группу, 
+# бот видит это событие и мгновенно отправляет в чат приветственное сообщение 
+# (из заранее заготовленного шаблона), упоминая ребенка по имени, знакомясь с ним. 
+
+# 3) При добавлении новых клиентов, 
+# также им в лс присылается пакет материалов для подготовки к уроку. 
+# Это тоже надо автоматизировать. 
+
+# 4) Также, при добавлении родителя в группу родителей, 
+# бот в лс ему должен отправлять список правил школы. 

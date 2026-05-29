@@ -9,7 +9,9 @@ FILE_PATH_CHECKLIST = os.path.join(PARENT_DIR, 'data', 'checklist.pdf')
 file_lock = asyncio.Lock()
 
 BOT_NAME = "ДАЙБИТ_БОТ"
-id_bot = "@id645485463201_bot"
+
+# id_bot = "@id645485463201_bot"
+id_bot = "id645485463201_1_bot"
 
 BASE_URL = "https://makebeatschool.amocrm.ru"
 HEADERS = {
@@ -36,3 +38,7 @@ REMINDER_TEXT = """
 
 Хорошего урока 💥
 """
+
+ADDED_TO_GROUP_TEXT = """
+Добро пожаловать в группу"""
+TEXT_START_FROM_GROUP = "перейти в бота"
