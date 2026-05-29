@@ -2,9 +2,9 @@ from datetime import datetime, timedelta, timezone
 import re
 from zoneinfo import ZoneInfo
 import requests
-from config import BASE_URL, HEADERS
+from config import BASE_URL, HEADERS, MOSCOW
 
-TZ = ZoneInfo("Europe/Moscow")
+# пример работы с амо - пока нигде не используется 
 
 def _normalize_phone(phone: str) -> str:
     return re.sub(r"\D+", "", phone or "")
@@ -18,13 +18,13 @@ def _parse_group_name(value: str) -> datetime | None:
             int(d[0:2]),
             int(t[0:2]),
             int(t[2:4]),
-            tzinfo=TZ,
+            tzinfo=MOSCOW,
         )
     except Exception:
         return None
 
 def _fallback_tomorrow_16() -> str:
-    dt = datetime.now(TZ).replace(hour=16, minute=0, second=0, microsecond=0) + timedelta(days=1)
+    dt = datetime.now(MOSCOW).replace(hour=16, minute=0, second=0, microsecond=0) + timedelta(days=1)
     return dt
 
 def _plus_one_minute() -> str:

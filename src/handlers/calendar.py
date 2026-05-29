@@ -57,35 +57,3 @@ async def time(event):
             await event.bot.send_message( chat_id=event.chat.chat_id,
                 text=CHECK_LIST, attachments=[attachment] )
         else: await event.message.answer("Чек-лист временно недоступен")
-
-
-
-
-
-
-
-# не используется (сделал а удалять жалко)
-# @router.message_callback(F.callback.payload.startswith("month:") | F.callback.payload.startswith("year:"))
-# async def change_month(event):
-#     _, y, m = event.callback.payload.split(":")
-#     await event.bot.edit_message( message_id=event.message.body.mid, text="Выберите дату",
-#         attachments=[calendar_keyboard(int(y), int(m))] )
-# @router.message_callback(F.callback.payload.startswith("day:"))
-# async def day(event):
-#     parts = event.callback.payload.split(":")
-#     if len(parts) != 4: return
-#     _, y, m, d = parts
-#     date = f"{d.zfill(2)}.{m.zfill(2)}.{y}"
-#     await set_reminder_time( user_id=event.from_user.user_id, day=date )
-#     await event.bot.send_message( chat_id=event.chat.chat_id, text="Теперь выберите время",
-#         attachments=[time_keyboard()] )
-# @router.message_callback(F.callback.payload.startswith("today:"))
-# async def today(event):
-#     parts = event.callback.payload.split(":")
-#     if len(parts) != 4: return
-#     _, y, m, d = parts
-#     date = f"{d.zfill(2)}.{m.zfill(2)}.{y}"
-#     await set_reminder_time( user_id=event.from_user.user_id, day=date )
-#     await event.bot.send_message( chat_id=event.chat.chat_id, text="Теперь выберите время",
-#         attachments=[time_keyboard()])
-    

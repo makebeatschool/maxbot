@@ -2,8 +2,9 @@ from datetime import datetime, timedelta
 import os
 import json
 from config import FILE_PATH, file_lock, DAYS, MOSCOW
-# from services.amoservice import get_trial_datetime_by_phone
 
+# в идеале добавить норм бд
+# и переделать в ооп
 
 def load_users():
     if not os.path.exists(FILE_PATH):
@@ -39,7 +40,6 @@ async def remove_user_by_chat_id(chat_id: int):
 async def add_user(user_id: int, chat_id: int, first_name: str = None,
                    last_name: str = None, username: str = None,):
     async with file_lock:
-        # lesson_time = get_trial_datetime_by_phone(phone)
         users = load_users()
         key = str(user_id)
         if key in users:
@@ -49,13 +49,11 @@ async def add_user(user_id: int, chat_id: int, first_name: str = None,
             "chat_id": chat_id,
             "first_name": first_name,
             "last_name": last_name,
-            # "username": username,
             "day": "None-None",
             "send_message": None
         }
         save_users(users)
         return True
-
 
 async def set_reminder_time(user_id: int, day: str = None, time: str = None):
     flag = "created"
@@ -83,7 +81,6 @@ async def set_reminder_time(user_id: int, day: str = None, time: str = None):
     await calculate_next_send_time(user_id)
     return flag
 
-
 async def calculate_next_send_time(user_id):
     async with file_lock:
         users = load_users()
@@ -98,7 +95,7 @@ async def calculate_next_send_time(user_id):
         try:
             h, m = map(int, t.split(":"))
         except: return False
-        now = datetime.now()
+        now = datetime.now(MOSCOW)
         target_weekday = weekdays.index(d)
         diff = (target_weekday - now.weekday()) % 7
         lesson_date = now.date() + timedelta(days=diff)
@@ -116,32 +113,3 @@ async def calculate_next_send_time(user_id):
         user["send_message"] = send_time.replace(tzinfo=MOSCOW).isoformat()
         save_users(users)
         return True
-    
-# не используется (сделал а удалять жалко для календаря )
-# async def set_reminder_time(user_id: int, day: str = None, time: str = None):
-#     async with file_lock:
-#         users = load_users()
-#         key = str(user_id)
-#         if key not in users:
-#             return False
-#         now = datetime.now()
-#         current = users[key].get("send_message")
-#         dt = (
-#             datetime.strptime(current, "%d.%m.%Y %H:%M")
-#             if current else
-#             now.replace(second=0, microsecond=0)
-#         )
-#         if day:
-#             d = datetime.strptime(day, "%d.%m.%Y")
-#             dt = dt.replace(year=d.year, month=d.month, day=d.day)
-#         if time:
-#             h, m = map(int, time.split(":"))
-#             dt = dt.replace(hour=h, minute=m)
-#         if not current:
-#             if day and not time:
-#                 dt = dt.replace(hour=0, minute=0)
-#             elif time and not day:
-#                 pass
-#         users[key]["send_message"] = dt.strftime("%d.%m.%Y %H:%M")
-#         save_users(users)
-#         return True

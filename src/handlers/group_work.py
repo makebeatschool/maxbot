@@ -1,5 +1,5 @@
 from maxapi.types import UserAdded
-from core.bot import dp
+from core.bot import dp, router
 from texts import ADDED_TO_GROUP_TEXT
 from keyboards.start import start_from_group_keyboard
 
@@ -24,11 +24,11 @@ async def on_user_removed(event):
         text=f"Пользователь {user.first_name} покинул группу."
     )
 
-# @router.message_created()
-# async def on_message(event):
-#     user = event.from_user
-#     text = event.message.body.text
-#     await event.bot.send_message(
-#         chat_id=event.chat.chat_id,
-#         text=f"{user.first_name} написал: {text}"
-#     )
+@router.message_created()
+async def on_message(event):
+    user = event.from_user
+    text = event.message.body.text
+    await event.bot.send_message(
+        chat_id=event.chat.chat_id,
+        text=f"{user.first_name} написал: {text}"
+    )
