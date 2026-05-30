@@ -5,6 +5,7 @@ from services.db_services.users_service import calculate_next_send_time
 from config import MOSCOW
 from texts import REMINDER_TEXT
 from services.db_services.trial_service import delete_trial_for_user, get_all_trial_reminders
+from services.db_services.lesson_service import get_all_lesson_reminders
 
 async def reminder_worker(bot):
     while True:
@@ -44,7 +45,28 @@ async def process_trial_reminders(bot):
                 print(f"Ошибка отправки trial {r['user_id']}: {e}")
 
 async def process_lesson_reminders(bot):
-    pass
+    now = datetime.now(MOSCOW)
+    lessons = await get_all_lesson_reminders()
+
+    for r in lessons:
+        send_time = r.get("next_message_time")
+        if not send_time: continue
+        try:
+            remind_time = datetime.fromisoformat(send_time)
+            if remind_time.tzinfo is None:
+                remind_time = remind_time.replace(tzinfo=MOSCOW)
+            else:
+                remind_time = remind_time.astimezone(MOSCOW)
+        except ValueError:
+            continue
+        if now >= remind_time:
+            name = r.get("first_name") or "Здравствуйте"
+            text = f"{name}, {REMINDER_TEXT}"
+            try:
+                await bot.send_message(chat_id=r["chat_id"], text=text)
+                await calculate_next_send_time(r["user_id"])
+            except Exception as e:
+                print(f"Ошибка отправки lesson {r['user_id']}: {e}")
 # async def reminder_worker(bot):
 #     while True:
 #         try:

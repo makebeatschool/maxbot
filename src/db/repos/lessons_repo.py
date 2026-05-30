@@ -14,6 +14,20 @@ async def upsert_user_lesson(user_id: int, lesson_date: str = "None-None", next_
     finally:
         await db.close()
 
+async def get_all_lesson_reminders():
+    db = await get_db()
+    try:
+        cur = await db.execute("""
+            SELECT l.user_id, l.lesson_date, l.next_message_time,
+                u.chat_id, u.first_name
+            FROM user_lessons l
+            JOIN users u ON u.user_id = l.user_id
+        """)
+        rows = await cur.fetchall()
+        return [dict(r) for r in rows]
+    finally:
+        await db.close()
+
 async def get_user_lesson(user_id: int):
     db = await get_db()
     try:

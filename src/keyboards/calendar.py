@@ -1,5 +1,3 @@
-import calendar
-from datetime import datetime
 from maxapi.types import CallbackButton, ButtonsPayload
 from config import DAYS
 
