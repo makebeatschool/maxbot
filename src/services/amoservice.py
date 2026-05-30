@@ -1,6 +1,5 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 import re
-from zoneinfo import ZoneInfo
 import requests
 from config import BASE_URL, HEADERS, MOSCOW
 
@@ -28,7 +27,7 @@ def _fallback_tomorrow_16() -> str:
     return dt
 
 def _plus_one_minute() -> str:
-    return (datetime.now(timezone.utc) + timedelta(minutes=1))
+    return (datetime.now(MOSCOW) + timedelta(minutes=1))
 
 def _safe_get_json(url: str, **kwargs) -> dict | None:
     try:
@@ -77,9 +76,9 @@ def get_trial_datetime_by_phone(phone: str) -> str:
     dt = _parse_group_name(catalog_data.get("name", ""))
     if not dt:
         return _fallback_tomorrow_16()
-    now_utc = datetime.now(timezone.utc)
-    if dt.astimezone(timezone.utc) < now_utc:
+    now_utc = datetime.now(MOSCOW)
+    if dt.astimezone(MOSCOW) < now_utc:
         return _plus_one_minute()
     # dt = dt - timedelta(hours=3)
     # return dt.astimezone(timezone.utc).isoformat()
-    return dt.astimezone(timezone.utc)
+    return dt.astimezone(MOSCOW)

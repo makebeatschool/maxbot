@@ -15,6 +15,6 @@ REMINDER_TEXT = """
 Хорошего урока 💥
 """
 
-ADDED_TO_GROUP_TEXT = """
-Добро пожаловать в группу"""
+ADDED_TO_GROUP_PARENT_TEXT = """Родитель, добро пожаловать в группу!"""
+ADDED_TO_GROUP_CHILD_TEXT = """Ребёнок, добро пожаловать в группу!"""
 TEXT_START_FROM_GROUP = "перейти в бота"

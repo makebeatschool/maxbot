@@ -6,6 +6,8 @@ from env import ACCESS_TOKEN
 PARENT_DIR = os.path.dirname(os.path.abspath(__file__))
 FILE_PATH = os.path.join(PARENT_DIR, 'data', 'users.json')
 FILE_PATH_CHECKLIST = os.path.join(PARENT_DIR, 'data', 'checklist.pdf')
+DB_PATH = os.path.join(os.path.dirname(PARENT_DIR), '', 'users.db')
+SCHEMA_PATH = os.path.join(PARENT_DIR, 'db', 'schema.sql')
 
 file_lock = asyncio.Lock()
 

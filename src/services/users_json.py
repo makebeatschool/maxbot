@@ -99,7 +99,8 @@ async def calculate_next_send_time(user_id):
         target_weekday = weekdays.index(d)
         diff = (target_weekday - now.weekday()) % 7
         lesson_date = now.date() + timedelta(days=diff)
-        lesson_dt = datetime.combine(lesson_date, datetime.min.time()).replace(hour=h, minute=m)
+        lesson_dt = datetime.combine( lesson_date, datetime.min.time(), 
+                tzinfo=MOSCOW).replace(hour=h, minute=m)
         delta = lesson_dt - now
         if delta < timedelta(minutes=15):
             lesson_dt += timedelta(days=7)

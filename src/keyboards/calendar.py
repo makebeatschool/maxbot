@@ -14,10 +14,10 @@ def weekdays_keyboard():
 def time_keyboard():
     buttons = []
     row = []
-    for h in range(24):
+    for h in range(17,21):
         t = f"{h:02d}:00"
-        row.append(CallbackButton(text=t, payload=f"time:{t}"))
-        if len(row) == 4:
+        row.append(CallbackButton(text=f"{t} МСК", payload=f"time:{t}"))
+        if len(row) == 2:
             buttons.append(row)
             row = []
     if row:

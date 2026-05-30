@@ -1,4 +1,5 @@
 import asyncio
+from pathlib import Path
 from core.bot import bot, dp
 
 import handlers.start
@@ -9,10 +10,13 @@ import handlers.messages
 import handlers.blocked
 from services.reminder import reminder_worker
 from services.preload_file import preload_file
+from db.database import init_db
+
 
 
 async def main():
     await preload_file(bot)
+    await init_db()
     asyncio.create_task(reminder_worker(bot))
     try:
         await dp.start_polling(bot)

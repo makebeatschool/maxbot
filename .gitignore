@@ -4,3 +4,4 @@ env.py
 teory.txt
 src/data/users.json
 src/data/users.json.tmp
+users.db

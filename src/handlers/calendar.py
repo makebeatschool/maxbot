@@ -1,7 +1,7 @@
 from core.bot import router
 from keyboards.calendar import open_weekdays_keyboard, time_keyboard, weekdays_keyboard, open_time_keyboard
 from maxapi import F
-from services.users import set_reminder_time
+# from services.users import set_reminder_time
 from texts import WRITE_TEST, CHECK_LIST
 from config import DAYS
 
@@ -23,7 +23,8 @@ async def weekday(event):
     _, day = parts
     weekdays = dict((value, text) for text, value in DAYS)
     if day not in weekdays: return
-    flag = await set_reminder_time( user_id=event.from_user.user_id, day=day )
+    flag = "updated"
+    # flag = await set_reminder_time( user_id=event.from_user.user_id, day=day )
     if flag == "updated":
         await event.bot.send_message( chat_id=event.chat.chat_id,
             text=f"Напоминание обновлено на {weekdays[day]}",
