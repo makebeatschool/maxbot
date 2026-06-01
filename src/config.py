@@ -22,3 +22,11 @@ HEADERS = {
 PHONE_FIELD_ID = 3371021
 TRIAL_DATETIME_FIELD_ID = 3372431
 DAYS = [ ("Пн", "mon"), ("Вт", "tue"), ("Ср", "wed"), ("Чт", "thu"), ("Пт", "fri"), ("Сб", "sat"), ("Вс", "sun"), ]
+
+CURATORS = [
+    {"name": "Полина Маслова", "id":"114798772", },
+    {"name": "Марина", "id":"9419001", },
+    {"name": "", "id":"297729641", },
+]
+
+CURATORS_ID = [int(c['id']) for c in CURATORS]

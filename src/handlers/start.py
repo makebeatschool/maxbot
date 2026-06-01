@@ -1,6 +1,6 @@
 from core.bot import dp
 from services.db_services.users_service import upsert_user
-from texts import TITLE_START_BTN
+from texts import LS_KID_SCENARIO, LS_PARENT_SCENARIO
 from keyboards.start import start_trial_keyboard
 from keyboards.calendar import weekdays_keyboard
 from services.sender import safe_send
@@ -29,15 +29,16 @@ async def on_bot_started(event):
         await safe_send( chat_id=event.chat_id, text=f"Самая вкусная и важная инфа..." )
     elif event.payload == 'kid':
         role = "kid"
-        await safe_send( chat_id=event.chat_id, text=f"Ребёнок, привет!" )
-        await safe_send( chat_id=event.chat_id, text=f"Вот тебе полезные материалы..." )
-        await safe_send( chat_id=event.chat_id, text=f"Выбор времени занятия" )
+        await safe_send( chat_id=event.chat_id, format="markdown",
+            text=LS_KID_SCENARIO['step1'].format(name=f"[{event.from_user.first_name}](max://user/{event.from_user.user_id})") )
+        await safe_send( chat_id=event.chat_id, text=LS_KID_SCENARIO['step2'] )
+        # await safe_send( chat_id=event.chat_id, text=f"Выбор времени занятия" )
     elif event.payload == 'parent':
         role = "parent"
-        await safe_send( chat_id=event.chat_id, text=f"Родитель ребёнка, привет!" )
-        await safe_send( chat_id=event.chat_id, text=f"Вот тебе полезные материалы  или мини-лекция..." )
+        await safe_send( chat_id=event.chat_id, 
+                        text=LS_PARENT_SCENARIO['step1'].format(name=f"[{event.from_user.first_name}](max://user/{event.from_user.user_id})"), format="markdown" )
         await safe_send( chat_id=event.chat_id,
-            text=f"Укажи день в который будет заниматся твой ребёнок", attachments=[weekdays_keyboard()] )
+            text=LS_PARENT_SCENARIO['step2'], attachments=[weekdays_keyboard()] )
     elif event.payload == 'admin':
         role = "admin"
         await safe_send( chat_id=event.chat_id, text=f"админ" )

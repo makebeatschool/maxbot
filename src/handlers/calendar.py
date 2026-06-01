@@ -45,15 +45,10 @@ async def time(event):
     if ":" not in t: return
     flag = await set_reminder_time( user_id=event.from_user.user_id, time=t )
     if flag == "updated":
-        await event.bot.send_message(
-            chat_id=event.chat.chat_id,
+        await event.bot.send_message( chat_id=event.chat.chat_id,
             text=f"Напоминание обновлено на {t}",
             attachments=[open_weekdays_keyboard()]
         )
     elif flag == "created":
-        attachment = event.bot.checklist_attachment
-        await event.message.answer(WRITE_TEST)
-        if attachment:
-            await event.bot.send_message( chat_id=event.chat.chat_id,
-                text=CHECK_LIST, attachments=[attachment] )
-        else: await event.message.answer("Чек-лист временно недоступен")
+        print(event.user.user_id)
+        # await event.message.answer(f"Отлично, ждём Вас в {t}")

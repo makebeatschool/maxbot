@@ -41,6 +41,7 @@ async def delete_user(user_id:int):
         await db.execute("DELETE FROM trial_reminders WHERE user_id=?", (user_id,))
         await db.execute("DELETE FROM user_lessons WHERE user_id=?", (user_id,))
         await db.execute("DELETE FROM users_phone WHERE user_id=?", (user_id,))
+        await db.execute("DELETE FROM group_users WHERE user_id=?", (user_id,))
         await db.execute("DELETE FROM users WHERE user_id=?", (user_id,))
         await db.commit()
     finally:
@@ -52,6 +53,7 @@ async def reset_user_relations(user_id:int):
         await db.execute("DELETE FROM trial_reminders WHERE user_id=?", (user_id,))
         await db.execute("DELETE FROM user_lessons WHERE user_id=?", (user_id,))
         await db.execute("DELETE FROM users_phone WHERE user_id=?", (user_id,))
+        await db.execute("DELETE FROM group_users WHERE user_id=?", (user_id,))
         await db.commit()
     finally:
         await db.close()

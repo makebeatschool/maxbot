@@ -6,8 +6,7 @@ async def write_trial_time( user_id, send_time ):
     return True
 
 async def get_all_trials():
-    await get_all_trial_reminders()
-    return True
+    return await get_all_trial_reminders()
 
 async def delete_trial_for_user(user_id):
     await delete_trial_reminder(user_id)

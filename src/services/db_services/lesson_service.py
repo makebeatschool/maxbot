@@ -5,8 +5,7 @@ from db.repos.lessons_repo import upsert_user_lesson, get_all_lesson_reminders, 
 
 
 async def get_all_lessons():
-    await get_all_lesson_reminders()
-    return True
+    return await get_all_lesson_reminders()
 
 
 async def set_reminder_time(user_id:int, day:str=None, time:str=None):

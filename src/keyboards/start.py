@@ -1,5 +1,5 @@
 from maxapi.types import ButtonsPayload, CallbackButton, LinkButton, RequestContactButton
-from texts import TEXT_START_FROM_GROUP, TEXT_START_BTN
+from texts import TEXT_START_BTN
 from env import id_bot
 
 
@@ -19,7 +19,7 @@ def start_keyboard():
 def start_from_group_keyboard(typeOfUser):
     return ButtonsPayload(
         buttons=[
-            [ LinkButton( text=TEXT_START_FROM_GROUP,
+            [ LinkButton( text="start",
                     url=f"https://max.ru/{id_bot}?start={typeOfUser}" )]
         ]
     ).pack()

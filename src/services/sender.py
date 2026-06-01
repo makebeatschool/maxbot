@@ -1,12 +1,13 @@
 from maxapi.exceptions import MaxApiError
 from core.bot import bot
 
-async def safe_send(chat_id: int, text: str, attachments=None):
+async def safe_send(chat_id: int, text: str, attachments=None, format=None):
     try:
         return await bot.send_message(
             chat_id=chat_id,
             text=text,
-            attachments=attachments
+            attachments=attachments,
+            format=format
         )
     # это надо починить чобы не было обшей ошибки (пока хз как)
     except MaxApiError as e:
