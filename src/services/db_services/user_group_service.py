@@ -1,5 +1,5 @@
-from config import MOSCOW
-from texts import CURATOR_DISAPEARED, KID_DESAPEARED
+from config import MOSCOW, ANTON_GLADISHEW
+from texts import CURATOR_DISAPEARED, KID_DESAPEARED, GLADISHEW_TEXTS
 from datetime import datetime, timedelta
 from db.repos.user_repo import get_user, delete_user
 from db.repos.user_group_repo import get_all_group_users, delete_group_user, upsert_group_user
@@ -34,11 +34,16 @@ async def get_message_for_group(chat_id: int, user_id: int):
     group = await get_group_by_id(chat_id)
     if not group: return False
     message = ""
+    text_to_Gladishew = ""
     curator = await get_user(group["curator_id"])
     if not curator: return False
     if group["curator_id"] == user_id:
         message = CURATOR_DISAPEARED.format(
             name_curator=f"[{curator['first_name']}](max://user/{curator['user_id']})")
+        text_to_Gladishew = GLADISHEW_TEXTS["curator"].format(
+            name_curator=f"[{curator['first_name']}](max://user/{curator['user_id']})", 
+            group_name=group["group_name"]
+        )
     else:
         u = await get_user(user_id)
         uName = "Ребёнок"
@@ -47,6 +52,12 @@ async def get_message_for_group(chat_id: int, user_id: int):
         message = KID_DESAPEARED.format(
             name_curator=f"[{curator['first_name']}](max://user/{curator['user_id']})",
             name_kid=f"[{uName}](max://user/{u['user_id']})")
+        text_to_Gladishew = GLADISHEW_TEXTS["kid"].format(
+            name_kid=f"[{uName}](max://user/{u['user_id']})",
+            group_name=group["group_name"])
     await update_time_for_notify(chat_id, user_id)
     curator = await get_user(group["curator_id"])
-    return curator["chat_id"], message
+    if not curator: return False
+    Gladishew = await get_user(ANTON_GLADISHEW["id"])
+    if not Gladishew: return False
+    return curator["chat_id"], message, Gladishew["chat_id"], text_to_Gladishew

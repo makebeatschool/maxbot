@@ -80,9 +80,10 @@ async def process_group_reminders(bot):
                 remind_time = remind_time.astimezone(MOSCOW)
         except ValueError: continue
         if now >= remind_time:
-            chat_id, text = await get_message_for_group(r.get("chat_id"), r.get("user_id"))
+            chat_id, text, text_to_Gladishew = await get_message_for_group(r.get("chat_id"), r.get("user_id"))
             try:
                 await bot.send_message(chat_id=chat_id, text=text, format="markdown")
+                await bot.send_message(chat_id=chat_id, text=text_to_Gladishew, format="markdown")
             except Exception as e:
                 print(f"Ошибка отправки group {r['user_id']}: {e}")
 
