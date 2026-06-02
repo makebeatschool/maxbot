@@ -1,15 +1,16 @@
 from db.database import get_db
 
-async def upsert_group(chat_id:int,title:str,curator_id:int|None=None):
+async def upsert_group(chat_id:int,title:str,curator_id:int|None=None, teacher_id:int|None=None):
     db=await get_db()
     try:
         await db.execute("""
-            INSERT INTO chat_groups(chat_id,title,curator_id)
-            VALUES(?,?,?)
+            INSERT INTO chat_groups(chat_id,title,curator_id,teacher_id)
+            VALUES(?,?,?,?)
             ON CONFLICT(chat_id) DO UPDATE SET
                 title=excluded.title,
-                curator_id=COALESCE(excluded.curator_id, chat_groups.curator_id)
-        """,(chat_id,title,curator_id))
+                curator_id=COALESCE(excluded.curator_id, chat_groups.curator_id),
+                teacher_id=COALESCE(excluded.teacher_id, chat_groups.teacher_id)
+        """,(chat_id,title,curator_id, teacher_id))
         await db.commit()
     finally:
         await db.close()

@@ -3,7 +3,7 @@ from maxapi.types import UserAdded
 from core.bot import dp, router
 from texts import GROUP_KID_SCENARIO
 from keyboards.start import start_from_group_keyboard
-from config import CURATORS_ID
+from config import CURATORS_ID, TEACHERS_ID
 from services.db_services.user_group_service import remove_user_from_group, add_user_to_group, update_time_for_notify, get_all_users_grou_activity
 from services.db_services.group_service import set_group, delete_group_and_all_notify
 from services.db_services.users_service import add_user_from_group
@@ -12,10 +12,14 @@ from services.db_services.users_service import add_user_from_group
 async def on_user_added(event: UserAdded):
     user = event.user
     group_name = (event.chat.title or "").lower()
-    if user.user_id in CURATORS_ID:
-        await set_group(event.chat.chat_id, event.chat.title, user.user_id)
     await add_user_from_group(event.chat.chat_id, user.user_id, user.last_name)
     await add_user_to_group(event.chat.chat_id, user.user_id)
+    if user.user_id in CURATORS_ID:
+        await set_group(event.chat.chat_id, event.chat.title, user.user_id)
+        return
+    if user.user_id in TEACHERS_ID:
+        await set_group(event.chat.chat_id, event.chat.title, user.user_id)
+        return
     full_name = user.first_name
     # if user.last_name:
     #     full_name += f" {user.last_name}"
@@ -56,8 +60,7 @@ async def on_bot_added(event):
     curator_id = None
     members_to_process = []
     for m in chat_members.members:
-        if m.is_bot or m.is_admin:
-            continue
+        if m.is_bot or m.is_admin: continue
         if m.user_id in CURATORS_ID:
             curator_id = m.user_id
         members_to_process.append(m)
@@ -74,9 +77,7 @@ async def on_bot_added(event):
 
 @dp.bot_removed()
 async def on_bot_removed(event):
-    print("bot_deleted")
     users = await get_all_users_grou_activity()
     for user in users: 
-        print(user)
         await remove_user_from_group(user["user_id"], event.chat_id)
     await delete_group_and_all_notify(event.chat_id)

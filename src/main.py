@@ -31,3 +31,8 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("Bot stopped")
         asyncio.run(save_all_tables_to_file())
+
+
+# ======= тз-да-похуй-но-надо =========
+# 1. заменить принты на что-то 
+# 2. переделать работу с бд в ооп

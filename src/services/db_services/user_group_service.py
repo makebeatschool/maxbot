@@ -21,7 +21,7 @@ async def update_time_for_notify(chat_id: int, user_id: int):
     group = await get_group_by_id(chat_id)
     if not group: return False
     days = 3 if group["curator_id"] == user_id else 10
-    notify_at = (datetime.now(MOSCOW) + timedelta(days==days)).strftime("%Y-%m-%d %H:%M:%S")
+    notify_at = (datetime.now(MOSCOW) + timedelta(days=days)).strftime("%Y-%m-%d %H:%M:%S")
     # days = 10 if group["curator_id"] == user_id else 10
     # notify_at = (datetime.now(MOSCOW) + timedelta(seconds=days)).strftime("%Y-%m-%d %H:%M:%S")
     await upsert_group_user(chat_id, user_id, notify_at)

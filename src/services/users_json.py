@@ -3,8 +3,7 @@ import os
 import json
 from config import FILE_PATH, file_lock, DAYS, MOSCOW
 
-# в идеале добавить норм бд
-# и переделать в ооп
+# было дял работы с джисон - авось ещё пригодится
 
 def load_users():
     if not os.path.exists(FILE_PATH):

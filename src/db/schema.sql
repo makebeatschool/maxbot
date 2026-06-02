@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS chat_groups (
     chat_id INTEGER PRIMARY KEY,
     title TEXT NOT NULL,
     curator_id INTEGER,
+    teacher_id INTEGER,
     FOREIGN KEY (curator_id) REFERENCES users(user_id) ON DELETE SET NULL
 );
 -- таблица когда отправлять уведомление юзеру
