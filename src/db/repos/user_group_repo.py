@@ -41,6 +41,22 @@ async def get_group_users(chat_id:int):
     finally:
         await db.close()
 
+async def get_group_users_by_user_id(user_id: int):
+    db = await get_db()
+    try:
+        cur = await db.execute("""
+            SELECT gu.chat_id, gu.user_id, gu.notify_at,
+                   u.first_name, u.last_name, u.username,
+                   g.title
+            FROM group_users gu
+            JOIN users u ON u.user_id = gu.user_id
+            JOIN chat_groups g ON g.chat_id = gu.chat_id
+            WHERE gu.user_id = ?
+        """, (user_id,))
+        return [dict(r) for r in await cur.fetchall()]
+    finally:
+        await db.close()
+
 async def get_group_user(chat_id:int,user_id:int):
     db=await get_db()
     try:

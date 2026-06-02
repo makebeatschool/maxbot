@@ -1,6 +1,6 @@
 from db.repos.user_repo import (get_user, insert_user, update_user, 
                                 reset_user_relations, delete_user)
-from db.repos.user_group_repo import get_all_group_users
+from db.repos.user_group_repo import get_all_group_users, get_group_users_by_user_id
 
 async def upsert_user( user_id:int, chat_id:int,  first_name=None, last_name=None, 
                       username=None, role:str="none" ):
@@ -24,10 +24,9 @@ async def add_user_from_group(chat_id:int, user_id:int, first_name=None, last_na
 async def remove_user_by_chat_id(user_id: int):
     u = await get_user(user_id)
     if not u: return
-    has_groups = any(r["user_id"] == user_id for r in await get_all_group_users())
-    print(f"Пользователь {user_id} имеет группы: {has_groups}")
-    if has_groups:
-        await update_user(user_id, chat_id=None)
+    grou_for_user = await get_group_users_by_user_id(user_id)
+    if grou_for_user:
+        await update_user(user_id, chat_id=grou_for_user[0]['chat_id'])
     else:
         await delete_user(user_id)
 
