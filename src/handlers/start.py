@@ -1,21 +1,22 @@
 from core.bot import dp
-from services.db_services.users_service import upsert_user
-from texts import LS_KID_SCENARIO, LS_PARENT_SCENARIO
+from services.db_services.users_service import upsert_user, get_user_or_none
+from handlers.scenario.kid_scenario import kid_steps_before_date
 from keyboards.start import start_trial_keyboard
-from keyboards.calendar import weekdays_keyboard
+from handlers.scenario.parent_scenario import parent_steps_before_date
 from services.sender import safe_send
 
-# пробное
+# пробное занятие
 # https://max.ru/id645485463201_1_bot?start=trial
-# не заплатил
-# https://max.ru/id645485463201_1_bot?start=lead
 # ребёнок
 # https://max.ru/id645485463201_1_bot?start=kid
 # родитель
 # https://max.ru/id645485463201_1_bot?start=parent
-# для теста
-# https://max.ru/id645485463201_1_bot?start=admin
+# для регистрации чатов рабочих юзеров
 # https://max.ru/id645485463201_1_bot
+# не заплатил(в разработке)
+# https://max.ru/id645485463201_1_bot?start=lead
+# для теста (пока не трогать)
+# https://max.ru/id645485463201_1_bot?start=admin
 @dp.bot_started()
 async def on_bot_started(event):
     role = "none"
@@ -28,17 +29,15 @@ async def on_bot_started(event):
         await safe_send( chat_id=event.chat_id, text=f"Не заплатил" )
         await safe_send( chat_id=event.chat_id, text=f"Самая вкусная и важная инфа..." )
     elif event.payload == 'kid':
+        user = await get_user_or_none(event.from_user.user_id)
+        if user and user["role"] == "parent":
+            await safe_send( chat_id=event.chat_id, text=f"Вы уже зарегистрированы как родитель" )
+            return
         role = "kid"
-        await safe_send( chat_id=event.chat_id, format="markdown",
-            text=LS_KID_SCENARIO['step1'].format(name=f"[{event.from_user.first_name}](max://user/{event.from_user.user_id})") )
-        await safe_send( chat_id=event.chat_id, text=LS_KID_SCENARIO['step2'] )
-        # await safe_send( chat_id=event.chat_id, text=f"Выбор времени занятия" )
+        await kid_steps_before_date(event)
     elif event.payload == 'parent':
         role = "parent"
-        await safe_send( chat_id=event.chat_id, 
-                        text=LS_PARENT_SCENARIO['step1'].format(name=f"[{event.from_user.first_name}](max://user/{event.from_user.user_id})"), format="markdown" )
-        await safe_send( chat_id=event.chat_id,
-            text=LS_PARENT_SCENARIO['step2'], attachments=[weekdays_keyboard()] )
+        await parent_steps_before_date(event)
     elif event.payload == 'admin':
         role = "admin"
         await safe_send( chat_id=event.chat_id, text=f"админ" )

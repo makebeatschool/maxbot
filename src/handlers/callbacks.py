@@ -52,7 +52,18 @@ async def on_contact(event):
                 else: await event.message.answer("Чек-лист временно недоступен")
 
 
+@router.message_callback(F.callback.payload == "kid_yes")
+async def start(event):
+    await event.bot.send_message( chat_id=event.chat.chat_id,
+            text="Выберите день недели",
+            attachments=[weekdays_keyboard()]
+    )
 
+@router.message_callback(F.callback.payload == "kid_no")
+async def start(event):
+    await event.bot.send_message( chat_id=event.chat.chat_id,
+            text="😞",
+    )
 
 
 # @router.message_callback(F.callback.payload == "start_trial_bot")

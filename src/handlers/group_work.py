@@ -1,6 +1,7 @@
+from env import id_bot
 from maxapi.types import UserAdded
 from core.bot import dp, router
-# from texts import ADDED_TO_GROUP_PARENT_TEXT, ADDED_TO_GROUP_CHILD_TEXT
+from texts import GROUP_KID_SCENARIO
 from keyboards.start import start_from_group_keyboard
 from config import CURATORS_ID
 from services.db_services.user_group_service import remove_user_from_group, add_user_to_group, update_time_for_notify, get_all_users_grou_activity
@@ -16,21 +17,24 @@ async def on_user_added(event: UserAdded):
     await add_user_from_group(event.chat.chat_id, user.user_id, user.last_name)
     await add_user_to_group(event.chat.chat_id, user.user_id)
     full_name = user.first_name
-    if user.last_name:
-        full_name += f" {user.last_name}"
+    # if user.last_name:
+    #     full_name += f" {user.last_name}"
     if "родители" in group_name:
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text=f"[{full_name}](max://user/{user.user_id})\n heloo",
+            text=f"[{full_name}](max://user/{user.user_id})\n hello",
             format="markdown",
             attachments=[start_from_group_keyboard("parent")]
         )
     else:
         await event.bot.send_message(
             chat_id=event.chat.chat_id,
-            text=f"[{full_name}](max://user/{user.user_id})\n heloo",
+            text=GROUP_KID_SCENARIO.format(
+                name=f'[{full_name}](max://user/{user.user_id})', 
+                link=f'https://max.ru/{id_bot}?start=kid',
+                curator=f'[{full_name}](max://user/{user.user_id})',
+                teacher=f'[{full_name}](max://user/{user.user_id})',),
             format="markdown",
-            attachments=[start_from_group_keyboard("child")]
         )
 
 @dp.user_removed()

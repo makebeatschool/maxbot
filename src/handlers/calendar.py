@@ -2,8 +2,10 @@ from core.bot import router
 from keyboards.calendar import open_weekdays_keyboard, time_keyboard, weekdays_keyboard, open_time_keyboard
 from maxapi import F
 from services.db_services.lesson_service import set_reminder_time
-from texts import WRITE_TEST, CHECK_LIST
 from config import DAYS
+from services.db_services.users_service import get_user_or_none
+from handlers.scenario.parent_scenario import parent_steps_after_date
+from handlers.scenario.kid_scenario import kid_steps_after_date
 
 
 @router.message_callback(F.callback.payload == "change_weekday")
@@ -30,7 +32,7 @@ async def weekday(event):
             attachments=[open_time_keyboard()] )
     elif flag == "created":
         await event.bot.send_message( chat_id=event.chat.chat_id,
-            text=f"Теперь выберите время",
+            text=f"Выберите пожалуйста согласованные с менеджером день недели время",
             attachments=[time_keyboard()])
 
 @router.message_callback(F.callback.payload.startswith("time:"))
@@ -50,5 +52,8 @@ async def time(event):
             attachments=[open_weekdays_keyboard()]
         )
     elif flag == "created":
-        print(event.user.user_id)
-        # await event.message.answer(f"Отлично, ждём Вас в {t}")
+        user = await get_user_or_none(event.from_user.user_id)
+        if user and user["role"] == "parent":
+            await parent_steps_after_date(event)
+        elif user and user["role"] == "kid":
+            await kid_steps_after_date(event)

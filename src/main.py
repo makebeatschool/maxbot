@@ -1,5 +1,4 @@
 import asyncio
-from pathlib import Path
 from core.bot import bot, dp
 
 import handlers.start
@@ -8,10 +7,11 @@ import handlers.group_work
 import handlers.calendar
 import handlers.messages
 import handlers.blocked
+
+from db.database import init_db
 from services.reminder import reminder_worker
 from services.preload_file import preload_file
-from db.database import init_db
-
+from db.database import save_all_tables_to_file
 
 
 async def main():
@@ -30,18 +30,4 @@ if __name__ == "__main__":
         asyncio.run(main())
     except KeyboardInterrupt:
         print("Bot stopped")
-
-
-# 1) Создать в боте функцию автоматического напоминания о пробном занятии 
-# за 24 часа, 1 час и 15 минут по мск времени.
-
-# 2) Как только куратор (или менеджер) добавляет ученика в группу, 
-# бот видит это событие и мгновенно отправляет в чат приветственное сообщение 
-# (из заранее заготовленного шаблона), упоминая ребенка по имени, знакомясь с ним. 
-
-# 3) При добавлении новых клиентов, 
-# также им в лс присылается пакет материалов для подготовки к уроку. 
-# Это тоже надо автоматизировать. 
-
-# 4) Также, при добавлении родителя в группу родителей, 
-# бот в лс ему должен отправлять список правил школы. 
+        asyncio.run(save_all_tables_to_file())
