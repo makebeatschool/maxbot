@@ -5,7 +5,8 @@ from services.amoservice import get_trial_datetime_by_phone
 from services.db_services.users_service import get_user_or_none
 from services.db_services.trial_service import write_trial_time
 from services.db_services.user_phone_service import write_phone
-from texts import WRITE_TEST, CHECK_LIST
+from keyboards.users_kayboard import yes_keyboard
+from texts import WRITE_TEST, CHECK_LIST, LS_KID_SCENARIO
 
 def extract_phone_from_contact(payload):
     vcf_info = payload.vcf_info
@@ -55,14 +56,15 @@ async def on_contact(event):
 @router.message_callback(F.callback.payload == "kid_yes")
 async def start(event):
     await event.bot.send_message( chat_id=event.chat.chat_id,
-            text="Выберите день недели",
+            text=LS_KID_SCENARIO["day"],
             attachments=[weekdays_keyboard()]
     )
 
 @router.message_callback(F.callback.payload == "kid_no")
 async def start(event):
     await event.bot.send_message( chat_id=event.chat.chat_id,
-            text="😞",
+            text=LS_KID_SCENARIO["no"],
+            attachments=[yes_keyboard()]
     )
 
 

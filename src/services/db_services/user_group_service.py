@@ -47,7 +47,6 @@ async def get_message_for_group(chat_id: int, user_id: int):
     else:
         kid = await get_user(user_id)
         if not kid: return False
-        print(f"[{kid['first_name']}](max://user/{kid['user_id']})")
         message = KID_DESAPEARED.format(
             name_curator=f"[{curator['first_name']}](max://user/{curator['user_id']})",
             name_kid=f"[{kid['first_name']}](max://user/{kid['user_id']})")

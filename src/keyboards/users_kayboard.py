@@ -8,3 +8,10 @@ def yes_no_keyboard():
             CallbackButton(text="Нет", payload="kid_no")
         ]
     ]).pack()
+
+def yes_keyboard():
+    return ButtonsPayload(buttons=[
+        [
+            CallbackButton(text="Да!", payload="kid_yes"),
+        ]
+    ]).pack()

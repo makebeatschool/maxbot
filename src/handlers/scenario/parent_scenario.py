@@ -11,9 +11,9 @@ async def parent_steps_before_date(event):
             text=LS_PARENT_SCENARIO['step2'], attachments=[weekdays_keyboard()] )
 
 async def parent_steps_after_date(event):
-    await asyncio.sleep(180)
     await safe_send( chat_id=event.chat.chat_id, 
                         text=LS_PARENT_SCENARIO['step3'].format(link=f"https://max.ru/{id_bot}?start=kid"))
+    await asyncio.sleep(180)
     await safe_send( chat_id=event.chat.chat_id,
             text=LS_PARENT_SCENARIO['step4'] )
     await safe_send( chat_id=event.chat.chat_id, text=LS_PARENT_SCENARIO['step5'] )

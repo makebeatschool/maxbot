@@ -1,7 +1,7 @@
 from env import id_bot
 from maxapi.types import UserAdded
 from core.bot import dp, router
-from texts import GROUP_KID_SCENARIO
+from texts import GROUP_KID_SCENARIO, GROUP_PARENT_SCENARIO
 from keyboards.start import start_from_group_keyboard
 from config import CURATORS_ID, TEACHERS_ID
 from services.db_services.user_group_service import remove_user_from_group, add_user_to_group, update_time_for_notify, get_all_users_grou_activity
@@ -21,7 +21,8 @@ async def hello_user(event, user):
         full_name += f" {user.last_name}"
     if "родители" in group_name:
         await event.bot.send_message( chat_id=event.chat.chat_id,
-            text=f"[{full_name}](max://user/{user.user_id})\nhello",
+            text=GROUP_PARENT_SCENARIO.format(
+                name=f'[{full_name}](max://user/{user.user_id})'),
             format="markdown",
             attachments=[start_from_group_keyboard("parent")]
         )
@@ -86,7 +87,7 @@ async def on_bot_added(event):
         await add_user_from_group(chat_id, m.user_id, m.first_name, m.last_name)
         await update_time_for_notify(chat_id, m.user_id)
         if m.user_id in CURATORS_ID or m.user_id in TEACHERS_ID: continue
-        await hello_user(event, m)
+        # await hello_user(event, m)
     if not me.is_admin:
         await event.bot.send_message( chat_id=chat_id,
             text="Бот добавлен в группу, не забудьте сделать его администратором.")

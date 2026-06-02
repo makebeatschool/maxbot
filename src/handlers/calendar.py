@@ -3,6 +3,7 @@ from keyboards.calendar import open_weekdays_keyboard, time_keyboard, weekdays_k
 from maxapi import F
 from services.db_services.lesson_service import set_reminder_time
 from config import DAYS
+from texts import LS_KID_SCENARIO, LS_PARENT_SCENARIO
 from services.db_services.users_service import get_user_or_none
 from handlers.scenario.parent_scenario import parent_steps_after_date
 from handlers.scenario.kid_scenario import kid_steps_after_date
@@ -31,9 +32,12 @@ async def weekday(event):
             text=f"Напоминание обновлено на {weekdays[day]}",
             attachments=[open_time_keyboard()] )
     elif flag == "created":
+        user = await get_user_or_none(event.from_user.user_id)
+        if user and user["role"] == "kid":
+            text = LS_KID_SCENARIO["time"]
+        else: text = LS_PARENT_SCENARIO["time"]
         await event.bot.send_message( chat_id=event.chat.chat_id,
-            text=f"Выберите пожалуйста согласованные с менеджером день недели время",
-            attachments=[time_keyboard()])
+            text=text, attachments=[time_keyboard()])
 
 @router.message_callback(F.callback.payload.startswith("time:"))
 async def time(event):
