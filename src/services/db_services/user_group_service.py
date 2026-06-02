@@ -42,19 +42,18 @@ async def get_message_for_group(chat_id: int, user_id: int):
             name_curator=f"[{curator['first_name']}](max://user/{curator['user_id']})")
         text_to_Gladishew = GLADISHEW_TEXTS["curator"].format(
             name_curator=f"[{curator['first_name']}](max://user/{curator['user_id']})", 
-            group_name=group["group_name"]
+            group_name=group["title"]
         )
     else:
-        u = await get_user(user_id)
-        uName = "Ребёнок"
-        if u:
-            uName = u["first_name"]
+        kid = await get_user(user_id)
+        if not kid: return False
+        print(f"[{kid['first_name']}](max://user/{kid['user_id']})")
         message = KID_DESAPEARED.format(
             name_curator=f"[{curator['first_name']}](max://user/{curator['user_id']})",
-            name_kid=f"[{uName}](max://user/{u['user_id']})")
+            name_kid=f"[{kid['first_name']}](max://user/{kid['user_id']})")
         text_to_Gladishew = GLADISHEW_TEXTS["kid"].format(
-            name_kid=f"[{uName}](max://user/{u['user_id']})",
-            group_name=group["group_name"])
+            name_kid=f"[{kid['first_name']}](max://user/{kid['user_id']})",
+            group_name=group["title"])
     await update_time_for_notify(chat_id, user_id)
     curator = await get_user(group["curator_id"])
     if not curator: return False

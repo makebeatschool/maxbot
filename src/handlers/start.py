@@ -20,25 +20,26 @@ from services.sender import safe_send
 @dp.bot_started()
 async def on_bot_started(event):
     role = "none"
-    if 'trial' in event.payload.lower():
+    payload = event.payload or ''
+    if 'trial' in payload.lower():
         role = "trial"
         await safe_send( chat_id=event.chat_id,
             text=f"пробное занятие", attachments=[start_trial_keyboard()] )
-    elif 'lead' in event.payload.lower():
+    elif 'lead' in payload.lower():
         role = "lead"
         await safe_send( chat_id=event.chat_id, text=f"Не заплатил" )
         await safe_send( chat_id=event.chat_id, text=f"Самая вкусная и важная инфа..." )
-    elif 'kid' in event.payload.lower():
+    elif 'kid' in payload.lower():
         user = await get_user_or_none(event.from_user.user_id)
         if user and user["role"] == "parent":
             await safe_send( chat_id=event.chat_id, text=f"Вы уже зарегистрированы как родитель" )
             return
         role = "kid"
         await kid_steps_before_date(event)
-    elif 'parent' in event.payload.lower():
+    elif 'parent' in payload.lower():
         role = "parent"
         await parent_steps_before_date(event)
-    elif 'admin' in event.payload.lower():
+    elif 'admin' in payload.lower():
         role = "admin"
         await safe_send( chat_id=event.chat_id, text=f"админ" )
     else:
