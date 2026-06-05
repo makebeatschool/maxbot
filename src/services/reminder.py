@@ -1,7 +1,7 @@
 import asyncio
-from datetime import datetime
-from config import MOSCOW
-from texts import REMINDER_TEXT
+from datetime import datetime, timedelta
+from config import MOSCOW, WEEK
+from texts import REMINDER_TEXT, REMINDER_TEXTS
 from services.db_services.trial_service import delete_trial_for_user, get_all_trials
 from services.db_services.lesson_service import get_all_lessons, calculate_next_send_time
 from services.db_services.user_group_service import get_all_users_grou_activity, get_message_for_group
@@ -36,13 +36,29 @@ async def process_trial_reminders(bot):
             continue
         if now >= remind_time:
             name = r.get("first_name") or "Здравствуйте"
-            text = f"{name}, {REMINDER_TEXT}"
+            text = f"{name}, {REMINDER_TEXT.format(time=REMINDER_TEXTS['probnik'])}"
             try:
                 await bot.send_message( chat_id=r["chat_id"], text=text)
                 await delete_trial_for_user(r["user_id"])
             except Exception as e:
                 print(f"Ошибка отправки trial {r['user_id']}: {e}")
 
+
+def reminder_step(obj: dict) -> str:
+    msg_dt = datetime.fromisoformat(obj['next_message_time']).astimezone(MOSCOW)
+    day_s, hm = obj['lesson_date'].split('-')
+    h, m = map(int, hm.split(':'))
+    target_wd = WEEK[day_s.lower()]
+    cur = msg_dt.date()
+    days_ahead = (target_wd - cur.weekday()) % 7
+    lesson_dt = datetime.combine(cur + timedelta(days=days_ahead), datetime.min.time(), tzinfo=MOSCOW).replace(hour=h, minute=m)
+    if lesson_dt <= msg_dt: lesson_dt += timedelta(days=7)
+    diff = lesson_dt - msg_dt
+    if timedelta(hours=1) < diff < timedelta(hours=24):
+        return '24h'
+    if timedelta(minutes=15) < diff <= timedelta(hours=1):
+        return '1h'
+    return '15m'
 async def process_lesson_reminders(bot):
     now = datetime.now(MOSCOW)
     lessons = await get_all_lessons()
@@ -59,7 +75,7 @@ async def process_lesson_reminders(bot):
             continue
         if now >= remind_time:
             name = r.get("first_name") or "Здравствуйте"
-            text = f"{name}, {REMINDER_TEXT}"
+            text = f"{name}, {REMINDER_TEXT.format(time=REMINDER_TEXTS[reminder_step(r)])}"
             try:
                 await bot.send_message(chat_id=r["chat_id"], text=text)
                 await calculate_next_send_time(r["user_id"])

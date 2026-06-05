@@ -30,6 +30,7 @@ if __name__ == "__main__":
         asyncio.run(main())
     except KeyboardInterrupt:
         print("Bot stopped")
+        # это для записи всей бд в джисон и просмтора что там есть
         asyncio.run(save_all_tables_to_file())
 
 

@@ -66,6 +66,7 @@ async def calculate_next_send_time(user_id:int):
         send_time = lesson_dt - timedelta(hours=1)
     else:
         send_time = lesson_dt - timedelta(minutes=15)
+    # send_time = datetime(2026, 6, 5, 10, 40, tzinfo=MOSCOW)
     await upsert_user_lesson( user_id, lesson_date=day,
         next_message_time=send_time.replace(tzinfo=MOSCOW).isoformat() )
     return True

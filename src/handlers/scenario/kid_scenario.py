@@ -11,4 +11,4 @@ async def kid_steps_before_date(event):
             text=LS_KID_SCENARIO['step3'], attachments=[yes_no_keyboard()] )
     
 async def kid_steps_after_date(event):
-    await safe_send( chat_id=event.chat.chat_id, text="время выбрано" )
+    await safe_send( chat_id=event.chat.chat_id, text=LS_KID_SCENARIO['step4'] )

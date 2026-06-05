@@ -19,20 +19,22 @@ async def hello_user(event, user):
     full_name = user.first_name
     if user.last_name:
         full_name += f" {user.last_name}"
-    if "родители" in group_name:
-        await event.bot.send_message( chat_id=event.chat.chat_id,
-            text=GROUP_PARENT_SCENARIO.format(
-                name=f'[{full_name}](max://user/{user.user_id})'),
-            format="markdown",
-            attachments=[start_from_group_keyboard("parent")]
-        )
-        return
     group = await get_group_by_id(event.chat.chat_id)
     curator = "Куратор ещё не назначен"
     teacher = "Преподаватель ещё не назначен"
     if group:
         curator = await format_group_user(group.get("curator_id"), curator)
         teacher = await format_group_user(group.get("teacher_id"), teacher)
+    if "родители" in group_name.lower():
+        await event.bot.send_message( chat_id=event.chat.chat_id,
+            text=GROUP_PARENT_SCENARIO.format(
+                name=f'[{full_name}](max://user/{user.user_id})',
+                link = f'https://max.ru/{id_bot}?start=parent',
+                curator=curator, teacher=teacher ),
+            format="markdown",
+            attachments=[start_from_group_keyboard("parent")]
+        )
+        return
     await event.bot.send_message(
         chat_id=event.chat.chat_id,
         text=GROUP_KID_SCENARIO.format(
@@ -87,7 +89,7 @@ async def on_bot_added(event):
         await add_user_from_group(chat_id, m.user_id, m.first_name, m.last_name)
         await update_time_for_notify(chat_id, m.user_id)
         if m.user_id in CURATORS_ID or m.user_id in TEACHERS_ID: continue
-        # await hello_user(event, m)
+        await hello_user(event, m)
     if not me.is_admin:
         await event.bot.send_message( chat_id=chat_id,
             text="Бот добавлен в группу, не забудьте сделать его администратором.")
