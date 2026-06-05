@@ -12,7 +12,7 @@ async def format_group_user(user_id, empty_text):
     if not user_id: return empty_text
     user = await get_user_or_none(user_id)
     if not user: return empty_text
-    return f'[{user['first_name']}](max://user/{user_id})'
+    return f'[{user["first_name"]}](max://user/{user_id})'
 
 async def hello_user(event, user):
     group_name = (event.chat.title or "").lower()
