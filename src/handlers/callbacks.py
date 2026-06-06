@@ -41,11 +41,11 @@ async def on_contact(event):
             if user['role'] == "trial":
                 await write_phone(user_id, phone)
                 send_message_date = get_trial_datetime_by_phone(phone)
-                send_message_date = "2026-05-30 17:26:00+03:00"
+                # send_message_date = "2026-05-30 17:26:00+03:00"
                 await write_trial_time(user_id, send_message_date)          
                 attachment = event.bot.checklist_attachment
-                await event.bot.send_message( chat_id=event.chat.chat_id,
-                        text=f"Записали вас на {send_message_date}")
+                # await event.bot.send_message( chat_id=event.chat.chat_id,
+                #         text=f"Записали вас на {send_message_date}")
                 await event.message.answer(WRITE_TEST)
                 if attachment:
                     await event.bot.send_message( chat_id=event.chat.chat_id,

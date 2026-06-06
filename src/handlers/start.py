@@ -1,4 +1,5 @@
 from core.bot import dp
+from texts import TITLE_START_BTN
 from services.db_services.users_service import upsert_user, get_user_or_none
 from handlers.scenario.kid_scenario import kid_steps_before_date
 from keyboards.start import start_trial_keyboard
@@ -24,7 +25,7 @@ async def on_bot_started(event):
     if 'trial' in payload.lower():
         role = "trial"
         await safe_send( chat_id=event.chat_id,
-            text=f"пробное занятие", attachments=[start_trial_keyboard()] )
+            text=TITLE_START_BTN, attachments=[start_trial_keyboard()] )
     elif 'lead' in payload.lower():
         role = "lead"
         await safe_send( chat_id=event.chat_id, text=f"Не заплатил" )

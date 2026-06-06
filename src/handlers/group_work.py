@@ -63,11 +63,15 @@ async def on_user_removed(event):
     user = event.user
     await remove_user_from_group(user.user_id, event.chat.chat_id)
 
+# print(dir(router))
 @router.message_created()
 async def on_message(event):
+    print("ddd")
     if event.chat.type != "group": return
     user = event.from_user
     await update_time_for_notify(event.chat.chat_id, user.user_id)
+    print(event)
+    group_name = event.chat.title
 
 @dp.bot_added()
 async def on_bot_added(event):
