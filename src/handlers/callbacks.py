@@ -30,7 +30,7 @@ async def start(event):
     else:
         await event.message.answer("Вы уже записаны")
 
-@router.message_created()
+# @router.message_created()
 async def on_contact(event):
     attachments = event.message.body.attachments or []
     for att in attachments:

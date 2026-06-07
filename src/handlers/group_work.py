@@ -5,7 +5,7 @@ from texts import GROUP_KID_SCENARIO, GROUP_PARENT_SCENARIO
 from keyboards.start import start_from_group_keyboard
 from config import CURATORS_ID, TEACHERS_ID
 from services.db_services.user_group_service import remove_user_from_group, add_user_to_group, update_time_for_notify, get_all_users_grou_activity
-from services.db_services.group_service import set_group, get_group_by_id, delete_group_and_all_notify
+from services.db_services.group_service import (set_group, get_group_by_id, delete_group_and_all_notify, calculate_next_time_dz)
 from services.db_services.users_service import add_user_from_group, get_user_or_none
 
 async def format_group_user(user_id, empty_text):
@@ -63,15 +63,16 @@ async def on_user_removed(event):
     user = event.user
     await remove_user_from_group(user.user_id, event.chat.chat_id)
 
-# print(dir(router))
-@router.message_created()
-async def on_message(event):
-    print("ddd")
-    if event.chat.type != "group": return
+# @router.message_created()
+async def on_group_message(event):
+    if event.chat.type != "chat": return
     user = event.from_user
     await update_time_for_notify(event.chat.chat_id, user.user_id)
-    print(event)
-    group_name = event.chat.title
+    # await calculate_next_time_dz(event.chat.chat_id)
+    if event.from_user.user_id in CURATORS_ID:
+        text = event.message.body.text
+        if text and "#домашка" in text:
+            await calculate_next_time_dz(event.chat.chat_id)
 
 @dp.bot_added()
 async def on_bot_added(event):

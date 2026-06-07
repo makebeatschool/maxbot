@@ -44,7 +44,7 @@ async def on_bot_started(event):
         role = "admin"
         await safe_send( chat_id=event.chat_id, text=f"админ" )
     else:
-        await safe_send( chat_id=event.chat_id, text="неизвестный юзер" )
+        await safe_send( chat_id=event.chat_id, text="Вы зарегестрырованы!\nВ этот чат Вам будет приходить полезная информация" )
         await safe_send( chat_id=event.chat_id, text=f"chat_id : {event.chat_id}\nuser_id : {event.from_user.user_id}" )
     await upsert_user(
         user_id=event.from_user.user_id,

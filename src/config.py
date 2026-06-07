@@ -40,7 +40,6 @@ TEACERS = [
     # {"name": "Телемаркетолог(для теста)", "id":"297729641", }
 ]
 
-# 153144555
 ANTON_GLADISHEW = {"name": "Антон Гладишев", "id":"153144555", }
 # ANTON_GLADISHEW = {"name": "Телемаркетолог(для теста)", "id":"297729641", }
 CURATORS_ID = [int(c['id']) for c in CURATORS]

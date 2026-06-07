@@ -1,14 +1,15 @@
 import asyncio
 from core.bot import bot, dp
 
+import handlers.messages
 import handlers.start
 import handlers.callbacks
 import handlers.group_work
 import handlers.calendar
-import handlers.messages
 import handlers.blocked
 
 from db.database import init_db
+from db.migrations import migrate_chat_groups
 from services.reminder import reminder_worker
 from services.preload_file import preload_file
 from db.database import save_all_tables_to_file
@@ -17,6 +18,7 @@ from db.database import save_all_tables_to_file
 async def main():
     await preload_file(bot)
     await init_db()
+    # await migrate_chat_groups()
     asyncio.create_task(reminder_worker(bot))
     try:
         await dp.start_polling(bot)
