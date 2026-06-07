@@ -97,7 +97,7 @@ async def on_bot_added(event):
         await add_user_from_group(chat_id, m.user_id, m.first_name, m.last_name)
         await update_time_for_notify(chat_id, m.user_id)
         if m.user_id in CURATORS_ID or m.user_id in TEACHERS_ID: continue
-        await hello_user(event, m)
+        # await hello_user(event, m)
     if not me.is_admin:
         await event.bot.send_message( chat_id=chat_id,
             text="Бот добавлен в группу, не забудьте сделать его администратором.")
