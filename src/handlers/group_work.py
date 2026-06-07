@@ -83,11 +83,14 @@ async def on_bot_added(event):
     teacher_id = None
     members_to_process = []
     for m in chat_members.members:
-        if m.is_bot or m.is_admin: continue
+        is_important_user = False
         if m.user_id in CURATORS_ID:
             curator_id = m.user_id
+            is_important_user = True
         if m.user_id in TEACHERS_ID:
             teacher_id = m.user_id
+            is_important_user = True
+        if (m.is_bot or m.is_admin) and not is_important_user: continue
         members_to_process.append(m)
     await set_group(chat_id, event.chat.title, curator_id, teacher_id)
     for m in members_to_process:
