@@ -15,7 +15,7 @@ BOT_NAME = "ДАЙБИТ_БОТ"
 MOSCOW = ZoneInfo("Europe/Moscow")
 
 URL_GOOGLE_GROUP_TABLE = "https://docs.google.com/spreadsheets/d/1fxD9g-vl1ER9mxgn6DpIYlaSBqcICSBdhdQ63dGDQw8/edit?gid=1201762462#gid=1201762462"
-
+TELEGRAM_DOMEN = "https://white-block-333b.nefarionys.workers.dev"
 BASE_URL = "https://makebeatschool.amocrm.ru"
 HEADERS = {
     "Authorization": f"Bearer {ACCESS_TOKEN}",

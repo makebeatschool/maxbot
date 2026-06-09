@@ -5,6 +5,7 @@ from handlers.scenario.kid_scenario import kid_steps_before_date
 from keyboards.start import start_trial_keyboard
 from handlers.scenario.parent_scenario import parent_steps_before_date
 from services.sender import safe_send
+from services.db_services.trial_reg_service import save_trial_reg
 
 # пробное занятие
 # https://max.ru/id645485463201_1_bot?start=trial
@@ -24,6 +25,7 @@ async def on_bot_started(event):
     payload = event.payload or ''
     if 'trial' in payload.lower():
         role = "trial"
+        await save_trial_reg(event.from_user.user_id, f"{event.from_user.first_name} {event.from_user.last_name}",)
         await safe_send( chat_id=event.chat_id,
             text=TITLE_START_BTN, attachments=[start_trial_keyboard()] )
     elif 'lead' in payload.lower():

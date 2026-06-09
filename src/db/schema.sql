@@ -45,3 +45,16 @@ CREATE TABLE IF NOT EXISTS group_users (
     FOREIGN KEY (chat_id) REFERENCES chat_groups(chat_id) ON DELETE CASCADE,
     FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE
 );
+-- Таблица для итории зарегестрированых на пробное 
+CREATE TABLE IF NOT EXISTS trial_registrations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    full_name TEXT NOT NULL,
+    reg_date TEXT NOT NULL,
+    UNIQUE(user_id, reg_date)
+);
+-- таблица для служебной информации
+CREATE TABLE IF NOT EXISTS service_info (
+    key TEXT PRIMARY KEY,
+    value TEXT NOT NULL
+);

@@ -14,10 +14,13 @@ from services.reminder import reminder_worker
 from services.preload_file import preload_file
 from db.database import save_all_tables_to_file
 
+# from services.db_services.trial_reg_service import send_tg_trial_report
 
 async def main():
     await preload_file(bot)
     await init_db()
+    # today = "2026-06-09"
+    # await send_tg_trial_report(today)
     # await migrate_chat_groups()
     asyncio.create_task(reminder_worker(bot))
     try:

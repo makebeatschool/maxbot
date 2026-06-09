@@ -6,6 +6,8 @@ from services.db_services.trial_service import delete_trial_for_user, get_all_tr
 from services.db_services.lesson_service import get_all_lessons, calculate_next_send_time
 from services.db_services.user_group_service import get_all_users_grou_activity, get_message_for_group, update_time_for_notify
 from services.db_services.group_service import get_all_group_records, calculate_next_time_dz, get_message_for_dz
+from services.db_services.trial_reg_service import send_tg_trial_report
+from services.db_services.service_info_servise import get_service, set_service
 
 async def reminder_worker(bot):
     while True:
@@ -15,6 +17,7 @@ async def reminder_worker(bot):
             await process_lesson_reminders(bot, now)
             await process_group_reminders(bot, now)
             await process_group_homework(bot, now)
+            await send_tg_report(now)
         except Exception as e:
             print(f"Ошибка reminder_worker: {e}")
         await asyncio.sleep(10)
@@ -108,4 +111,14 @@ async def process_group_homework(bot, now):
             except Exception as e:
                 print(f"Ошибка отправки group {r['user_id']}: {e}")
             
-
+async def send_tg_report(now):
+    # if ((now.hour, now.minute) <= (12, 28)) or ((now.hour, now.minute) >= (12, 30)):return
+    
+    if ((now.hour, now.minute) <= (21, 31)) or ((now.hour, now.minute) >= (21, 32)):return
+    today = now.date().isoformat()
+    next_send_date = await get_service("next_trial_report_date")
+    if next_send_date and next_send_date > today:return
+    ok = await send_tg_trial_report(today)
+    if not ok:return
+    tomorrow = (now.date() + timedelta(days=1)).isoformat()
+    await set_service("next_trial_report_date", tomorrow)
