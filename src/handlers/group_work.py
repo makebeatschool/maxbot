@@ -3,7 +3,7 @@ from maxapi.types import UserAdded
 from core.bot import dp, router
 from texts import GROUP_KID_SCENARIO, GROUP_PARENT_SCENARIO
 from keyboards.start import start_from_group_keyboard
-from config import CURATORS_ID, TEACHERS_ID
+from config import CURATORS_ID, TEACHERS_ID, MANAGERS_ID
 from services.db_services.user_group_service import remove_user_from_group, add_user_to_group, update_time_for_notify, get_all_users_grou_activity
 from services.db_services.group_service import (set_group, get_group_by_id, delete_group_and_all_notify, calculate_next_time_dz)
 from services.db_services.users_service import add_user_from_group, get_user_or_none
@@ -55,6 +55,7 @@ async def on_user_added(event: UserAdded):
     if user.user_id in TEACHERS_ID:
         await set_group(event.chat.chat_id, event.chat.title, teacher_id=user.user_id)
         return
+    if user.user_id in MANAGERS_ID: return
     user = event.user
     await hello_user(event, user)
     
