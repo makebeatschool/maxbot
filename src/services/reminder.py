@@ -114,7 +114,7 @@ async def process_group_homework(bot, now):
 async def send_tg_report(now):
     # if ((now.hour, now.minute) <= (12, 28)) or ((now.hour, now.minute) >= (12, 30)):return
     
-    if ((now.hour, now.minute) <= (21, 31)) or ((now.hour, now.minute) >= (21, 32)):return
+    if ((now.hour, now.minute) <= (21, 31)) or ((now.hour, now.minute) >= (21, 40)):return
     today = now.date().isoformat()
     next_send_date = await get_service("next_trial_report_date")
     if next_send_date and next_send_date > today:return

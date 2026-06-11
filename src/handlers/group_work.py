@@ -1,9 +1,10 @@
+import re
 from env import id_bot
 from maxapi.types import UserAdded
-from core.bot import dp, router
-from texts import GROUP_KID_SCENARIO, GROUP_PARENT_SCENARIO
+from core.bot import dp, router, bot
+from texts import GROUP_KID_SCENARIO, GROUP_PARENT_SCENARIO, GLADISHEW_TEXTS
 from keyboards.start import start_from_group_keyboard
-from config import CURATORS_ID, TEACHERS_ID, MANAGERS_ID
+from config import CURATORS_ID, TEACHERS_ID, MANAGERS_ID, ANTON_GLADISHEW
 from services.db_services.user_group_service import remove_user_from_group, add_user_to_group, update_time_for_notify, get_all_users_grou_activity
 from services.db_services.group_service import (set_group, get_group_by_id, delete_group_and_all_notify, calculate_next_time_dz)
 from services.db_services.users_service import add_user_from_group, get_user_or_none
@@ -13,6 +14,24 @@ async def format_group_user(user_id, empty_text):
     user = await get_user_or_none(user_id)
     if not user: return empty_text
     return f'[{user["first_name"]}](max://user/{user_id})'
+
+def extract_number(name):
+    m = re.search(r"\d+", str(name))
+    return int(m.group()) if m else None
+
+async def send_message_to_Gladishev(group_name, admin_id, user_name):
+    Gladishev = await get_user_or_none(ANTON_GLADISHEW['id'])
+    if not Gladishev : return
+    admin = await get_user_or_none(admin_id)
+    try:
+        if admin:
+            await bot.send_message(chat_id=Gladishev.get("chat_id", ""), text=GLADISHEW_TEXTS['added']
+                                .format( name_curator=admin.get("first_name", ""), 
+                                    num = extract_number(group_name), name=user_name ), format="markdown")        
+        else:
+            await bot.send_message(chat_id=Gladishev.get('chat_id',""), text=GLADISHEW_TEXTS['added_from_lik']
+                                .format( num = extract_number(group_name), name=user_name ), format="markdown")
+    except: return
 
 async def hello_user(event, user):
     group_name = (event.chat.title or "").lower()
@@ -43,6 +62,7 @@ async def hello_user(event, user):
             curator=curator, teacher=teacher, ),
         format="markdown",
     )
+    await send_message_to_Gladishev(event.chat.title, event.inviter_id, event.user.first_name)
 
 @dp.user_added()
 async def on_user_added(event: UserAdded):
