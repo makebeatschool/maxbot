@@ -6,10 +6,10 @@ from handlers.callbacks import on_contact
 
 @router.message_created()
 async def on_message(event: MessageCreated):
-    if event.chat.type == "chat":
-        await on_group_message(event)
-    else:
+    if event.chat.type == "dialog":
         await on_contact(event)
+    else:
+        await on_group_message(event)
     # text = (event.message.body.text or "").strip()
     # if text == TEXT_START_BTN:
     #     await event.message.answer(CHECK_LIST)

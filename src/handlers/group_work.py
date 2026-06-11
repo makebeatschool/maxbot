@@ -67,17 +67,18 @@ async def hello_user(event, user):
 @dp.user_added()
 async def on_user_added(event: UserAdded):
     user = event.user
-    await add_user_from_group(event.chat.chat_id, user.user_id, user.last_name)
-    await add_user_to_group(event.chat.chat_id, user.user_id)
-    if user.user_id in CURATORS_ID:
-        await set_group(event.chat.chat_id, event.chat.title, curator_id=user.user_id)
-        return
-    if user.user_id in TEACHERS_ID:
-        await set_group(event.chat.chat_id, event.chat.title, teacher_id=user.user_id)
-        return
-    if user.user_id in MANAGERS_ID: return
-    user = event.user
-    await hello_user(event, user)
+    try:
+        await add_user_from_group(event.chat.chat_id, user.user_id, user.last_name)
+        await add_user_to_group(event.chat.chat_id, user.user_id)
+        if user.user_id in CURATORS_ID:
+            await set_group(event.chat.chat_id, event.chat.title, curator_id=user.user_id)
+            return
+        if user.user_id in TEACHERS_ID:
+            await set_group(event.chat.chat_id, event.chat.title, teacher_id=user.user_id)
+            return
+        if user.user_id in MANAGERS_ID: return
+    except: pass
+    await hello_user(event, event.user)
     
 @dp.user_removed()
 async def on_user_removed(event):
