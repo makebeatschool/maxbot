@@ -20,7 +20,7 @@ async def add_user_to_group(chat_id: int, user_id: int, notify_at=None):
 async def update_time_for_notify(chat_id: int, user_id: int):
     group = await get_group_by_id(chat_id)
     if not group: return False
-    days = 3 if group["curator_id"] == user_id else 10
+    days = 5 if group["curator_id"] == user_id else 10
     notify_at = (datetime.now(MOSCOW) + timedelta(days=days)).strftime("%Y-%m-%d %H:%M:%S")
     # days = 10 if group["curator_id"] == user_id else 10
     # notify_at = (datetime.now(MOSCOW) + timedelta(seconds=days)).strftime("%Y-%m-%d %H:%M:%S")
@@ -39,7 +39,8 @@ async def get_message_for_group(chat_id: int, user_id: int):
     if not curator: return False
     if group["curator_id"] == user_id:
         message = CURATOR_DISAPEARED.format(
-            name_curator=f"[{curator['first_name']}](max://user/{curator['user_id']})")
+            name_curator=f"[{curator['first_name']}](max://user/{curator['user_id']})",
+            group_name=group["title"])
         text_to_Gladishew = GLADISHEW_TEXTS["curator"].format(
             name_curator=f"[{curator['first_name']}](max://user/{curator['user_id']})", 
             group_name=group["title"]

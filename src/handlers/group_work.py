@@ -88,6 +88,8 @@ async def on_user_removed(event):
 # @router.message_created()
 async def on_group_message(event):
     user = event.from_user
+    group_name = (event.chat.title or "").lower()
+    if "родители" in group_name.lower(): return
     await update_time_for_notify(event.chat.chat_id, user.user_id)
     # await calculate_next_time_dz(event.chat.chat_id)
     if event.from_user.user_id in CURATORS_ID:
