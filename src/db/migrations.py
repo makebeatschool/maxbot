@@ -10,3 +10,19 @@ async def migrate_chat_groups():
         await conn.commit()
         print("migration: next_message_time added")
     await conn.close()
+
+async def reset_notify_for_parent_groups():
+    db = await get_db()
+    try:
+        await db.execute("""
+            UPDATE group_users
+            SET notify_at = NULL
+            WHERE chat_id IN (
+                SELECT chat_id
+                FROM chat_groups
+                WHERE LOWER(title) LIKE '%родители%'
+            )
+        """)
+        await db.commit()
+    finally:
+        await db.close()

@@ -9,7 +9,7 @@ import handlers.calendar
 import handlers.blocked
 
 from db.database import init_db
-from db.migrations import migrate_chat_groups
+# from db.migrations import reset_notify_for_parent_groups
 from services.reminder import reminder_worker
 from services.preload_file import preload_file
 from db.database import save_all_tables_to_file
@@ -21,7 +21,7 @@ async def main():
     await init_db()
     # today = "2026-06-09"
     # await send_tg_trial_report(today)
-    # await migrate_chat_groups()
+    # await reset_notify_for_parent_groups()
     asyncio.create_task(reminder_worker(bot))
     try:
         await dp.start_polling(bot)
