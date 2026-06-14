@@ -70,3 +70,12 @@ async def calculate_next_send_time(user_id:int):
     await upsert_user_lesson( user_id, lesson_date=day,
         next_message_time=send_time.replace(tzinfo=MOSCOW).isoformat() )
     return True
+
+
+async def disable_lesson_reminder(user_id: int):
+    lesson = await get_user_lesson(user_id)
+    if not lesson: return False
+    await upsert_user_lesson( user_id=user_id,
+        lesson_date=lesson.get("lesson_date", "None-None"),
+        next_message_time=None )
+    return True

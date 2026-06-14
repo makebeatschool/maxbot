@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 from config import MOSCOW, WEEK
 from texts import REMINDER_TEXT, REMINDER_TEXTS, REMINDER_TEXT_PROBNOE
 from services.db_services.trial_service import delete_trial_for_user, get_all_trials
-from services.db_services.lesson_service import get_all_lessons, calculate_next_send_time
+from services.db_services.lesson_service import get_all_lessons, calculate_next_send_time, disable_lesson_reminder
 from services.db_services.user_group_service import get_all_users_grou_activity, get_message_for_group, update_time_for_notify
 from services.db_services.group_service import get_all_group_records, calculate_next_time_dz, get_message_for_dz
 from services.db_services.trial_reg_service import send_tg_trial_report
@@ -77,6 +77,9 @@ async def process_lesson_reminders(bot, now):
                 await bot.send_message(chat_id=r["chat_id"], text=text)
                 await calculate_next_send_time(r["user_id"])
             except Exception as e:
+                err = str(e)
+                if "chat.denied" in err or "dialog.suspended" in err:
+                    await disable_lesson_reminder(r["user_id"])
                 print(f"Ошибка отправки lesson {r['user_id']}: {e}")
 
 async def process_group_reminders(bot, now):
