@@ -13,16 +13,23 @@ async def migrate_chat_groups():
 
 async def reset_notify_for_parent_groups():
     db = await get_db()
+    updated = 0
+
     try:
-        await db.execute("""
-            UPDATE group_users
-            SET notify_at = NULL
-            WHERE chat_id IN (
-                SELECT chat_id
-                FROM chat_groups
-                WHERE LOWER(title) LIKE '%родители%'
-            )
-        """)
+        cur = await db.execute("SELECT chat_id, title FROM chat_groups")
+        groups = await cur.fetchall()
+
+        for g in groups:
+            if "родители" in g["title"].lower():
+                cur = await db.execute(
+                    "UPDATE group_users SET notify_at=NULL WHERE chat_id=?",
+                    (g["chat_id"],)
+                )
+                updated += cur.rowcount
+
         await db.commit()
+
     finally:
         await db.close()
+
+    print(f"updated: {updated}")
