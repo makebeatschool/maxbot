@@ -1,7 +1,7 @@
 import asyncio
 from datetime import datetime, timedelta
 from config import MOSCOW, WEEK
-from texts import REMINDER_TEXT, REMINDER_TEXTS
+from texts import REMINDER_TEXT, REMINDER_TEXTS, REMINDER_TEXT_PROBNOE
 from services.db_services.trial_service import delete_trial_for_user, get_all_trials
 from services.db_services.lesson_service import get_all_lessons, calculate_next_send_time
 from services.db_services.user_group_service import get_all_users_grou_activity, get_message_for_group, update_time_for_notify
@@ -41,7 +41,7 @@ async def process_trial_reminders(bot, now):
         if not remind_time: continue
         if now >= remind_time:
             name = r.get("first_name") or "Здравствуйте"
-            text = f"{name}, {REMINDER_TEXT.format(time=REMINDER_TEXTS['probnik'])}"
+            text = f"{name}, {REMINDER_TEXT_PROBNOE}"
             try:
                 await bot.send_message( chat_id=r["chat_id"], text=text)
                 await delete_trial_for_user(r["user_id"])
