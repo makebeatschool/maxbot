@@ -95,7 +95,7 @@ async def on_group_message(event):
     # await calculate_next_time_dz(event.chat.chat_id)
     if event.from_user.user_id in CURATORS_ID:
         text = event.message.body.text
-        if text and "#домашка" in text:
+        if text and ("#домашка" in text):
             await calculate_next_time_dz(event.chat.chat_id)
 
 @dp.bot_added()

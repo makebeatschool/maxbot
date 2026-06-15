@@ -28,7 +28,9 @@ async def on_message(event: MessageCreated):
         await on_contact(event)
     else:
         try: await on_group_message(event)
-        except: pass
+        except Exception as e:
+            with open(LOG_PATH, "a", encoding="utf-8") as f:
+                f.write(f'{{"time":"{datetime.now().isoformat()}","error":"{e}"}}\n')
     # text = (event.message.body.text or "").strip()
     # if text == TEXT_START_BTN:
     #     await event.message.answer(CHECK_LIST)

@@ -22,7 +22,7 @@ async def get_all_group_records():
 async def calculate_next_time_dz(chat_id):
     group = await get_group(chat_id)
     if not group: return False
-    m = re.search(r"Группа\s+(\d+)", group["title"])
+    m = re.search(r"группа\s+(\d+)", group["title"], re.IGNORECASE)
     if not m: return False
     group_name = f"Группа {m.group(1)}"
     groups = get_group_info(URL_GOOGLE_GROUP_TABLE)
