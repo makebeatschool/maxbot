@@ -21,7 +21,8 @@ def extract_number(name):
 
 async def send_message_to_Gladishev(group_name, admin_id, user_name):
     Gladishev = await get_user_or_none(ANTON_GLADISHEW['id'])
-    if not Gladishev : return
+    if not Gladishev: return
+    if Gladishev.get("chat_id", -1)<0: return
     admin = await get_user_or_none(admin_id)
     try:
         if admin:

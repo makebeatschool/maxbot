@@ -92,9 +92,10 @@ async def process_group_reminders(bot, now):
         if now >= remind_time:
             chat_id, text, Gladishew_id, text_to_Gladishew = await get_message_for_group(r.get("chat_id"), r.get("user_id"))
             try:
-                await bot.send_message(chat_id=chat_id, text=text, format="markdown")
-                await bot.send_message(chat_id=Gladishew_id, text=text_to_Gladishew, format="markdown")
                 await update_time_for_notify(r.get("chat_id"), r.get("user_id"))
+                await bot.send_message(chat_id=chat_id, text=text, format="markdown")
+                if Gladishew_id > 0:
+                    await bot.send_message(chat_id=Gladishew_id, text=text_to_Gladishew, format="markdown")
             except Exception as e:
                 print(f"Ошибка отправки group {r['user_id']}: {e}")
 
@@ -108,9 +109,10 @@ async def process_group_homework(bot, now):
         if now >= remind_time:
             chat_id, text, Gladishew_id, text_to_Gladishew = await get_message_for_dz(r.get("title"), r.get("curator_id"))
             try:
-                await bot.send_message(chat_id=chat_id, text=text, format="markdown")
-                await bot.send_message(chat_id=Gladishew_id, text=text_to_Gladishew, format="markdown")
                 await calculate_next_time_dz(r.get("chat_id"))
+                await bot.send_message(chat_id=chat_id, text=text, format="markdown")
+                if Gladishew_id > 0:
+                    await bot.send_message(chat_id=Gladishew_id, text=text_to_Gladishew, format="markdown")  
             except Exception as e:
                 print(f"Ошибка отправки group {r['user_id']}: {e}")
             
