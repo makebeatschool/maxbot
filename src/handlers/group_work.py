@@ -1,10 +1,10 @@
 import re
 from env import id_bot
 from maxapi.types import UserAdded
-from core.bot import dp, router, bot
+from core.bot import dp, bot
 from texts import GROUP_KID_SCENARIO, GROUP_PARENT_SCENARIO, GLADISHEW_TEXTS
 from keyboards.start import start_from_group_keyboard
-from config import CURATORS_ID, TEACHERS_ID, MANAGERS_ID, ANTON_GLADISHEW
+from config import CURATORS_ID, TEACHERS_ID, MANAGERS_ID, ANTON_GLADISHEW, CURATORS
 from services.db_services.user_group_service import remove_user_from_group, add_user_to_group, update_time_for_notify, get_all_users_grou_activity
 from services.db_services.group_service import (set_group, get_group_by_id, delete_group_and_all_notify, calculate_next_time_dz)
 from services.db_services.users_service import add_user_from_group, get_user_or_none
@@ -13,7 +13,13 @@ async def format_group_user(user_id, empty_text):
     if not user_id: return empty_text
     user = await get_user_or_none(user_id)
     if not user: return empty_text
-    return f'[{user["first_name"]}](max://user/{user_id})'
+    first = user["first_name"] or ""
+    last = user.get("last_name") or ""
+    display = f"{first} {last}".strip()
+    full_name = display
+    curator = next((c for c in CURATORS if c["id"] == str(user_id)), None)
+    if curator: display = curator["n_hello"]  
+    return f'[{full_name}](max://user/{user_id})'
 
 def extract_number(name):
     m = re.search(r"\d+", str(name))

@@ -13,7 +13,9 @@ async def parent_steps_before_date(event):
 async def parent_steps_after_date(event):
     await safe_send( chat_id=event.chat.chat_id, 
                         text=LS_PARENT_SCENARIO['step3'].format(link=f"https://max.ru/{id_bot}?start=kid"))
+    asyncio.create_task(parent_handler(event.chat.chat_id))
+
+async def parent_handler(chat_id: int):
     await asyncio.sleep(180)
-    await safe_send( chat_id=event.chat.chat_id,
-            text=LS_PARENT_SCENARIO['step4'] )
-    await safe_send( chat_id=event.chat.chat_id, text=LS_PARENT_SCENARIO['step5'] )
+    await safe_send(chat_id=chat_id, text=LS_PARENT_SCENARIO['step4'])
+    await safe_send(chat_id=chat_id, text=LS_PARENT_SCENARIO['step5'])

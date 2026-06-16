@@ -26,10 +26,10 @@ TRIAL_DATETIME_FIELD_ID = 3372431
 DAYS = [ ("Пн", "mon"), ("Вт", "tue"), ("Ср", "wed"), ("Чт", "thu"), ("Пт", "fri"), ("Сб", "sat"), ("Вс", "sun"), ]
 WEEK = {eng: i for i, (_, eng) in enumerate(DAYS)}
 CURATORS = [
-    {"name": "Полина Маслова", "id":"114798772", },
-    {"name": "Марина", "id":"9419001", },
-    {"name": "Карина Акмалова", "id":"99141628", }, 
-    {"name": "Телемаркетолог(для теста)", "id":"297729641", }
+    {"name": "Полина Маслова","n_hello":"Полиной", "id":"114798772", },
+    {"name": "Марина", "n_hello":"Мариной", "id":"9419001", },
+    {"name": "Карина Акмалова", "n_hello":"Кариной", "id":"99141628", }, 
+    # {"name": "Телемаркетолог(для теста)","n_hello":"Телемаркетологом", "id":"297729641", }
 ]
 # 40394112
 TEACERS = [
@@ -44,8 +44,8 @@ MANAGERS = [
     {"name": "Дмитрий Чермисов", "id":"222554504", },
     # {"name": "Телемаркетолог(для теста)", "id":"297729641", }
 ]
-# ANTON_GLADISHEW = {"name": "Антон Гладишев", "id":"153144555", }
-ANTON_GLADISHEW = {"name": "Телемаркетолог(для теста)", "id":"297729641", }
+ANTON_GLADISHEW = {"name": "Антон Гладишев", "id":"153144555", }
+# ANTON_GLADISHEW = {"name": "Телемаркетолог(для теста)", "id":"297729641", }
 CURATORS_ID = [int(c['id']) for c in CURATORS]
 TEACHERS_ID = [int(t['id']) for t in TEACERS]
 MANAGERS_ID = [int(t['id']) for t in MANAGERS]

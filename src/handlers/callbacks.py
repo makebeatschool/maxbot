@@ -6,7 +6,7 @@ from services.db_services.users_service import get_user_or_none
 from services.db_services.trial_service import write_trial_time
 from services.db_services.user_phone_service import write_phone
 from keyboards.users_kayboard import yes_keyboard
-from texts import WRITE_TEST, CHECK_LIST, LS_KID_SCENARIO
+from texts import WRITE_TEST, CHECK_LIST, LS_KID_SCENARIO, DEF_ANSWER
 
 def extract_phone_from_contact(payload):
     vcf_info = payload.vcf_info
@@ -33,6 +33,7 @@ async def start(event):
 # @router.message_created()
 async def on_contact(event):
     attachments = event.message.body.attachments or []
+    if not attachments:await event.message.answer(DEF_ANSWER)
     for att in attachments:
         if att.type == "contact":
             phone = extract_phone_from_contact(att.payload)
@@ -44,13 +45,11 @@ async def on_contact(event):
                 # send_message_date = "2026-05-30 17:26:00+03:00"
                 await write_trial_time(user_id, send_message_date)          
                 attachment = event.bot.checklist_attachment
-                # await event.bot.send_message( chat_id=event.chat.chat_id,
-                #         text=f"Записали вас на {send_message_date}")
                 await event.message.answer(WRITE_TEST)
                 if attachment:
-                    await event.bot.send_message( chat_id=event.chat.chat_id,
-                        text=CHECK_LIST, attachments=[attachment] )
+                    await event.message.answer( CHECK_LIST, attachments=[attachment])
                 else: await event.message.answer("Чек-лист временно недоступен")
+        else: await event.message.answer(DEF_ANSWER)
 
 
 @router.message_callback(F.callback.payload == "kid_yes")
