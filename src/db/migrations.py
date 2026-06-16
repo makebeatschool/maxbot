@@ -1,70 +1,70 @@
+import asyncio, aiohttp, requests
+
 from db.database import get_db
+from services.db_services.user_group_service import update_time_for_notify
+from services.db_services.users_service import add_user_from_group
 
-async def migrate_chat_groups():
-    conn = await get_db()
-    async with conn.execute("PRAGMA table_info(chat_groups)") as cur:
-        rows = await cur.fetchall()
-        cols = [r[1] for r in rows]
-    if "next_message_time" not in cols:
-        await conn.execute( "ALTER TABLE chat_groups ADD COLUMN next_message_time TEXT")
-        await conn.commit()
-        print("migration: next_message_time added")
-    await conn.close()
-
-async def reset_notify_for_parent_groups():
+CHAT_IDS = [
+    -73293115890968,
+    -73293128342808,
+    -73293084433688,
+    -73293076110616,
+]
+async def sync_group_users(chat_id: int, members: list):
     db = await get_db()
-    updated = 0
-    try:
-        cur = await db.execute("SELECT chat_id, title FROM chat_groups")
-        groups = await cur.fetchall()
+    cur = await db.execute(
+        "SELECT user_id FROM group_users WHERE chat_id = ?",
+        (chat_id,)
+    )
+    db_users = {row["user_id"] for row in await cur.fetchall()}
+    before_count = len(db_users)
+    added_count = 0
+    for m in members:
+        if m["user_id"] not in db_users:
+            await add_user_from_group( chat_id, m["user_id"],
+                m["first_name"], m["last_name"], )
+            added_count += 1
+        await update_time_for_notify(chat_id, m["user_id"])
+    cur = await db.execute( 
+        "SELECT COUNT(*) cnt FROM group_users WHERE chat_id = ?",
+        (chat_id,)
+    )
+    after_count = (await cur.fetchone())["cnt"]
+    await db.close()
+    print(  f"chat_id={chat_id} ")
+    print( f"before={before_count} ")
+    print( f"added={added_count} ")
+    print(f"after={after_count}")
 
-        for g in groups:
-            if "родители" in g["title"].lower():
-                cur = await db.execute(
-                    "UPDATE group_users SET notify_at=NULL WHERE chat_id=?",
-                    (g["chat_id"],)
-                )
-                updated += cur.rowcount
-        await db.commit()
-    finally: await db.close()
-    print(f"updated: {updated}")
-
-async def update_groups_data():
-    conn = await get_db()
-    try:
-        updated = 0
-        updates = {
-            -72734266116637: {"curator_id": 9419001},
-            -72256072195352: {"curator_id": 9419001},
-            -72160299845636: {"curator_id": 9419001},
-            -72160629229572: {"teacher_id": 205787955},
-            -72160608978948: {"teacher_id": 205787955},
-            -72160395134980: {"teacher_id": 205787955},
-            -72160366495748: {"teacher_id": 205787955},
-            -72160351946756: {"teacher_id": 205787955},
-            -72160267798532: {"teacher_id": 205787955},
-            -72160228018180: {"teacher_id": 205787955},
-            -72160213207044: {"teacher_id": 205787955},
-            -72160183846916: {"teacher_id": 205787955},
-            -72160171395076: {"teacher_id": 205787955},
-            -72160158156804: {"teacher_id": 205787955},
-            -72160145115140: {"teacher_id": 205787955},
-            -72160380389380: {"teacher_id": 205787955},
-        }
-        for chat_id, fields in updates.items():
-            if "curator_id" in fields:
-                cur = await conn.execute(
-                    "UPDATE chat_groups SET curator_id=? WHERE chat_id=?",
-                    (fields["curator_id"], chat_id)
-                )
-                updated += cur.rowcount
-            if "teacher_id" in fields:
-                cur = await conn.execute(
-                    "UPDATE chat_groups SET teacher_id=? WHERE chat_id=?",
-                    (fields["teacher_id"], chat_id)
-                )
-                updated += cur.rowcount
-        await conn.commit()
-        print(f"updated: {updated}")
-    finally:
-        await conn.close()
+async def fetch_chat_users(token: str, chat_ids=CHAT_IDS):
+    headers = {"Authorization": token}
+    result = {}
+    async with aiohttp.ClientSession(headers=headers) as session:
+        for chat_id in chat_ids:
+            admins = set()
+            members = []
+            marker = None
+            r = await session.get(f"https://platform-api.max.ru/chats/{chat_id}/members/admins")
+            data = await r.json()
+            for u in data.get("members", []):
+                admins.add(u["user_id"])
+            while True:
+                params = {"count": 100}
+                if marker is not None:
+                    params["marker"] = marker
+                r = await session.get(f"https://platform-api.max.ru/chats/{chat_id}/members", params=params)
+                data = await r.json()
+                for u in data.get("members", []):
+                    if u.get("is_bot"): continue
+                    if u["user_id"] in admins: continue
+                    members.append({
+                        "user_id": u["user_id"],
+                        "first_name": u.get("first_name"),
+                        "last_name": u.get("last_name"),
+                    })
+                marker = data.get("marker")
+                if marker is None: break
+            result[chat_id] = members
+    for chat_id, members in result.items():
+        await sync_group_users(chat_id, members)
+    print("end")

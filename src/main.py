@@ -9,7 +9,7 @@ import handlers.calendar
 import handlers.blocked
 
 from db.database import init_db
-# from db.migrations import update_groups_data
+# from db.migrations import fetch_chat_users
 from services.reminder import reminder_worker
 from services.preload_file import preload_file
 from db.database import save_all_tables_to_file
@@ -21,7 +21,8 @@ async def main():
     await init_db()
     # today = "2026-06-09"
     # await send_tg_trial_report(today)
-    # await update_groups_data()
+    # TOKEN = "f9LHodD0cOLyr4isXVK27c49omERW4D94onyG4749s3LyDuXg7aaCMkiXlf7XlhLq9G3yBzsMCOwo_vLjijB"
+    # await fetch_chat_users(TOKEN)
     asyncio.create_task(reminder_worker(bot))
     try:
         await dp.start_polling(bot)
