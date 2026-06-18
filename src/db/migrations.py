@@ -68,3 +68,21 @@ async def fetch_chat_users(token: str, chat_ids=CHAT_IDS):
     for chat_id, members in result.items():
         await sync_group_users(chat_id, members)
     print("end")
+
+async def reset_notify_for_parent_groups():
+    db = await get_db()
+    updated = 0
+    try:
+        cur = await db.execute("SELECT chat_id, title FROM chat_groups")
+        groups = await cur.fetchall()
+        for g in groups:
+            if "родители" in g["title"].lower():
+                cur = await db.execute(
+                    "UPDATE group_users SET notify_at=NULL WHERE chat_id=?",
+                    (g["chat_id"],)
+                )
+                updated += cur.rowcount
+        await db.commit()
+    finally:
+        await db.close()
+    print(f"updated: {updated}")
