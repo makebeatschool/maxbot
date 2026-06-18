@@ -35,18 +35,21 @@ def calculate_remind_time(send_time):
 async def process_trial_reminders(bot, now):
     reminders = await get_all_trials()
     for r in reminders:
-        send_time = r.get("send_time")
-        if not send_time: continue
-        remind_time = calculate_remind_time(send_time)
-        if not remind_time: continue
-        if now >= remind_time:
-            name = r.get("first_name") or "Здравствуйте"
-            text = f"{name}, {REMINDER_TEXT_PROBNOE}"
-            try:
-                await bot.send_message( chat_id=r["chat_id"], text=text)
-                await delete_trial_for_user(r["user_id"])
-            except Exception as e:
-                print(f"Ошибка отправки trial {r['user_id']}: {e}")
+        try:
+            send_time = r.get("send_time")
+            if not send_time: continue
+            remind_time = calculate_remind_time(send_time)
+            if not remind_time: continue
+            if now >= remind_time:
+                name = r.get("first_name") or "Здравствуйте"
+                text = f"{name}, {REMINDER_TEXT_PROBNOE}"
+                try:
+                    await bot.send_message( chat_id=r["chat_id"], text=text)
+                    await delete_trial_for_user(r["user_id"])
+                except Exception as e:
+                    print(f"Ошибка отправки trial {r['user_id']}: {e}")
+        except Exception as e:
+            print(f"Ошибка отправки trial {r['user_id']}: {e}")
 
 def reminder_step(obj: dict) -> str:
     msg_dt = datetime.fromisoformat(obj['next_message_time']).astimezone(MOSCOW)
@@ -66,64 +69,76 @@ def reminder_step(obj: dict) -> str:
 async def process_lesson_reminders(bot, now):
     lessons = await get_all_lessons()
     for r in lessons:
-        send_time = r.get("next_message_time")
-        if not send_time: continue
-        remind_time = calculate_remind_time(send_time)
-        if not remind_time: continue
-        if now >= remind_time:
-            name = r.get("first_name") or "Здравствуйте"
-            text = f"{name}, {REMINDER_TEXT.format(time=REMINDER_TEXTS[reminder_step(r)])}"
-            try:
-                await bot.send_message(chat_id=r["chat_id"], text=text)
-                await calculate_next_send_time(r["user_id"])
-            except Exception as e:
-                err = str(e)
-                if "chat.denied" in err or "dialog.suspended" in err:
-                    await disable_lesson_reminder(r["user_id"])
-                print(f"Ошибка отправки lesson {r['user_id']}: {e}")
+        try:
+            send_time = r.get("next_message_time")
+            if not send_time: continue
+            remind_time = calculate_remind_time(send_time)
+            if not remind_time: continue
+            if now >= remind_time:
+                name = r.get("first_name") or "Здравствуйте"
+                text = f"{name}, {REMINDER_TEXT.format(time=REMINDER_TEXTS[reminder_step(r)])}"
+                try:
+                    await bot.send_message(chat_id=r["chat_id"], text=text)
+                    await calculate_next_send_time(r["user_id"])
+                except Exception as e:
+                    err = str(e)
+                    if "chat.denied" in err or "dialog.suspended" in err:
+                        await disable_lesson_reminder(r["user_id"])
+                    print(f"Ошибка отправки lesson {r['user_id']}: {e}")
+        except Exception as e:
+            print(f"Ошибка отправки lesson {r['user_id']}: {e}")
 
 async def process_group_reminders(bot, now):
     userActivity = await get_all_users_grou_activity()
     for r in userActivity:
-        send_time = r.get("notify_at")
-        if not send_time: continue
-        remind_time = calculate_remind_time(send_time)
-        if not remind_time: continue
-        if now >= remind_time:
-            chat_id, text, Gladishew_id, text_to_Gladishew = await get_message_for_group(r.get("chat_id"), r.get("user_id"))
-            try:
-                await update_time_for_notify(r.get("chat_id"), r.get("user_id"))
-                await bot.send_message(chat_id=chat_id, text=text, format="markdown")
-                if Gladishew_id > 0:
-                    await bot.send_message(chat_id=Gladishew_id, text=text_to_Gladishew, format="markdown")
-            except Exception as e:
-                print(f"Ошибка отправки group {r['user_id']}: {e}")
+        try:
+            send_time = r.get("notify_at")
+            if not send_time: continue
+            remind_time = calculate_remind_time(send_time)
+            if not remind_time: continue
+            if now >= remind_time:
+                chat_id, text, Gladishew_id, text_to_Gladishew = await get_message_for_group(r.get("chat_id"), r.get("user_id"))
+                try:
+                    await update_time_for_notify(r.get("chat_id"), r.get("user_id"))
+                    await bot.send_message(chat_id=chat_id, text=text, format="markdown")
+                    if Gladishew_id > 0:
+                        await bot.send_message(chat_id=Gladishew_id, text=text_to_Gladishew, format="markdown")
+                except Exception as e:
+                    print(f"Ошибка отправки group {r['user_id']}: {e}")
+        except Exception as e:
+            print(f"Ошибка отправки group {r['user_id']}: {e}")
+
 
 async def process_group_homework(bot, now):
     homework_time = await get_all_group_records()
     for r in homework_time:
-        send_time = r.get("next_message_time")
-        if not send_time: continue
-        remind_time = calculate_remind_time(send_time)
-        if not remind_time: continue
-        if now >= remind_time:
-            chat_id, text, Gladishew_id, text_to_Gladishew = await get_message_for_dz(r.get("title"), r.get("curator_id"))
-            try:
-                await calculate_next_time_dz(r.get("chat_id"))
-                await bot.send_message(chat_id=chat_id, text=text, format="markdown")
-                if Gladishew_id > 0:
-                    await bot.send_message(chat_id=Gladishew_id, text=text_to_Gladishew, format="markdown")  
-            except Exception as e:
-                print(f"Ошибка отправки group {r['user_id']}: {e}")
+        try:
+            send_time = r.get("next_message_time")
+            if not send_time: continue
+            remind_time = calculate_remind_time(send_time)
+            if not remind_time: continue
+            if now >= remind_time:
+                chat_id, text, Gladishew_id, text_to_Gladishew = await get_message_for_dz(r.get("title"), r.get("curator_id"))
+                try:
+                    await calculate_next_time_dz(r.get("chat_id"))
+                    await bot.send_message(chat_id=chat_id, text=text, format="markdown")
+                    if Gladishew_id > 0:
+                        await bot.send_message(chat_id=Gladishew_id, text=text_to_Gladishew, format="markdown")  
+                except Exception as e:
+                    print(f"Ошибка отправки group {r['user_id']}: {e}")
+        except Exception as e:
+            print(f"Ошибка отправки group {r['user_id']}: {e}")
             
 async def send_tg_report(now):
     # if ((now.hour, now.minute) <= (12, 28)) or ((now.hour, now.minute) >= (12, 30)):return
-    
-    if ((now.hour, now.minute) <= (21, 31)) or ((now.hour, now.minute) >= (21, 40)):return
-    today = now.date().isoformat()
-    next_send_date = await get_service("next_trial_report_date")
-    if next_send_date and next_send_date > today:return
-    ok = await send_tg_trial_report(today)
-    if not ok:return
-    tomorrow = (now.date() + timedelta(days=1)).isoformat()
-    await set_service("next_trial_report_date", tomorrow)
+    try:
+        if ((now.hour, now.minute) <= (21, 31)) or ((now.hour, now.minute) >= (21, 40)):return
+        today = now.date().isoformat()
+        next_send_date = await get_service("next_trial_report_date")
+        if next_send_date and next_send_date > today:return
+        ok = await send_tg_trial_report(today)
+        if not ok:return
+        tomorrow = (now.date() + timedelta(days=1)).isoformat()
+        await set_service("next_trial_report_date", tomorrow)
+    except Exception as e:
+        print(f"Ошибка отправки tg: {e}")
