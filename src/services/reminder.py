@@ -97,7 +97,9 @@ async def process_group_reminders(bot, now):
             remind_time = calculate_remind_time(send_time)
             if not remind_time: continue
             if now >= remind_time:
-                chat_id, text, Gladishew_id, text_to_Gladishew = await get_message_for_group(r.get("chat_id"), r.get("user_id"))
+                result = await get_message_for_group(r.get("chat_id"), r.get("user_id"))
+                if not result: continue
+                chat_id, text, Gladishew_id, text_to_Gladishew = result
                 try:
                     await update_time_for_notify(r.get("chat_id"), r.get("user_id"))
                     await bot.send_message(chat_id=chat_id, text=text, format="markdown")

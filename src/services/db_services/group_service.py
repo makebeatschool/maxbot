@@ -43,7 +43,8 @@ async def calculate_next_time_dz(chat_id):
 async def get_message_for_dz(title, user_id):
     user = await get_user_or_none(user_id)
     AG = await get_user_or_none(ANTON_GLADISHEW['id'])
-    if not user: return False
+    AGID = AG['chat_id'] if AG else -1
+    if not user: return None
     text = FORGOT_GZ.format(group_num=title)
     text_to_Gladishew = GLADISHEW_TEXTS['dz'].format(name_curator=user['first_name'])
-    return user['chat_id'], text, AG['chat_id'], text_to_Gladishew 
+    return user['chat_id'], text, AGID, text_to_Gladishew 
