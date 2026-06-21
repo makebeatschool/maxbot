@@ -44,7 +44,8 @@ async def process_trial_reminders(bot, now):
                 name = r.get("first_name") or "Здравствуйте"
                 text = f"{name}, {REMINDER_TEXT_PROBNOE}"
                 try:
-                    await bot.send_message( chat_id=r["chat_id"], text=text)
+                    if r["chat_id"] and (r["chat_id"]>0):
+                        await bot.send_message( chat_id=r["chat_id"], text=text)
                     await delete_trial_for_user(r["user_id"])
                 except Exception as e:
                     print(f"Ошибка отправки trial {r['user_id']}: {e}")
@@ -78,7 +79,8 @@ async def process_lesson_reminders(bot, now):
                 name = r.get("first_name") or "Здравствуйте"
                 text = f"{name}, {REMINDER_TEXT.format(time=REMINDER_TEXTS[reminder_step(r)])}"
                 try:
-                    await bot.send_message(chat_id=r["chat_id"], text=text)
+                    if r and (r["chat_id"]>0):
+                        await bot.send_message(chat_id=r["chat_id"], text=text)
                     await calculate_next_send_time(r["user_id"])
                 except Exception as e:
                     err = str(e)
@@ -101,7 +103,8 @@ async def process_group_reminders(bot, now):
                 if not result: continue
                 chat_id, text, Gladishew_id, text_to_Gladishew = result
                 try:
-                    await update_time_for_notify(r.get("chat_id"), r.get("user_id"))
+                    if chat_id and (chat_id > 0):
+                        await update_time_for_notify(r.get("chat_id"), r.get("user_id"))
                     await bot.send_message(chat_id=chat_id, text=text, format="markdown")
                     if Gladishew_id > 0:
                         await bot.send_message(chat_id=Gladishew_id, text=text_to_Gladishew, format="markdown")
@@ -123,7 +126,8 @@ async def process_group_homework(bot, now):
                 chat_id, text, Gladishew_id, text_to_Gladishew = await get_message_for_dz(r.get("title"), r.get("curator_id"))
                 try:
                     await calculate_next_time_dz(r.get("chat_id"))
-                    await bot.send_message(chat_id=chat_id, text=text, format="markdown")
+                    if chat_id and (chat_id>0):
+                        await bot.send_message(chat_id=chat_id, text=text, format="markdown")
                     if Gladishew_id > 0:
                         await bot.send_message(chat_id=Gladishew_id, text=text_to_Gladishew, format="markdown")  
                 except Exception as e:
