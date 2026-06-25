@@ -62,7 +62,7 @@ def reminder_step(obj: dict) -> str:
     lesson_dt = datetime.combine(cur + timedelta(days=days_ahead), datetime.min.time(), tzinfo=MOSCOW).replace(hour=h, minute=m)
     if lesson_dt <= msg_dt: lesson_dt += timedelta(days=7)
     diff = lesson_dt - msg_dt
-    if timedelta(hours=1) < diff < timedelta(hours=24):
+    if diff > timedelta(hours=1):
         return '24h'
     if timedelta(minutes=15) < diff <= timedelta(hours=1):
         return '1h'
