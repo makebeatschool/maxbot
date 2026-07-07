@@ -46,5 +46,5 @@ async def get_message_for_dz(title, user_id):
     AGID = AG['chat_id'] if AG else -1
     if not user: return None
     text = FORGOT_GZ.format(group_num=title)
-    text_to_Gladishew = GLADISHEW_TEXTS['dz'].format(name_curator=user['first_name'])
+    text_to_Gladishew = GLADISHEW_TEXTS['dz'].format(name_curator=user['first_name'], grop_num=title)
     return user['chat_id'], text, AGID, text_to_Gladishew 
