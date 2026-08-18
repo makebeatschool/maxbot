@@ -86,3 +86,42 @@ async def reset_notify_for_parent_groups():
     finally:
         await db.close()
     print(f"updated: {updated}")
+
+PARENT_GROUPS = [
+    -72160183846916,  # 2
+    -72160284444676,  # 5
+    -72160339625988,  # 7
+    -72160422987780,  # 10
+    -72160476727300,  # 11
+    -72160526272516,  # 12
+    -72160551766020,  # 13
+    -72160664094724,  # 16
+    -74444649924612,  # 25
+]
+
+CHILD_GROUPS = [
+    -72160171395076,  # 2
+    -72160267798532,  # 5
+    -72160326846468,  # 7
+    -72160408242180,  # 10
+    -72160497960964,  # 11
+    -72160512706564,  # 12
+    -72160566773764,  # 13
+    -72160648235012,  # 16
+    -74444628756484,  # 25
+]
+
+async def set_curator_for_groups():
+    db = await get_db()
+    curator_id = 28097456
+    group_ids = PARENT_GROUPS + CHILD_GROUPS
+    try:
+        placeholders = ",".join("?" for _ in group_ids)
+        cur = await db.execute(
+            f"UPDATE chat_groups SET curator_id=? WHERE chat_id IN ({placeholders})",
+            (curator_id, *group_ids)
+        )
+        await db.commit()
+        print(f"updated: {cur.rowcount}")
+    finally:
+        await db.close()

@@ -10,6 +10,7 @@ import handlers.blocked
 
 from db.database import init_db
 # from db.migrations import reset_notify_for_parent_groups
+# from db.migrations import set_curator_for_groups
 from services.reminder import reminder_worker
 from services.preload_file import preload_file
 from db.database import save_all_tables_to_file
@@ -21,8 +22,7 @@ async def main():
     await init_db()
     # today = "2026-06-09"
     # await send_tg_trial_report(today)
-    # TOKEN = "f9LHodD0cOLyr4isXVK27c49omERW4D94onyG4749s3LyDuXg7aaCMkiXlf7XlhLq9G3yBzsMCOwo_vLjijB"
-    # await reset_notify_for_parent_groups()
+    # await set_curator_for_groups()
     asyncio.create_task(reminder_worker(bot))
     try:
         await dp.start_polling(bot)
@@ -36,8 +36,8 @@ if __name__ == "__main__":
         asyncio.run(main())
     except KeyboardInterrupt:
         print("Bot stopped")
-        # это для записи всей бд в джисон и просмтора что там есть
-        asyncio.run(save_all_tables_to_file())
+    # это для записи всей бд в джисон и просмтора что там есть
+    asyncio.run(save_all_tables_to_file())
 
 
 # ======= тз-да-похуй-но-надо =========
