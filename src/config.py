@@ -45,8 +45,8 @@ MANAGERS = [
     {"name": "Дмитрий Чермисов", "id":"222554504", },
     # {"name": "Телемаркетолог(для теста)", "id":"297729641", }
 ]
-# ANTON_GLADISHEW = {"name": "Антон Гладишев", "id":"153144555", }
-ANTON_GLADISHEW = {"name": "Телемаркетолог(для теста)", "id":"297729641", }
+ANTON_GLADISHEW = {"name": "Антон Гладишев", "id":"153144555", }
+# ANTON_GLADISHEW = {"name": "Телемаркетолог(для теста)", "id":"297729641", }
 CURATORS_ID = [int(c['id']) for c in CURATORS]
 TEACHERS_ID = [int(t['id']) for t in TEACERS]
 MANAGERS_ID = [int(t['id']) for t in MANAGERS]
