@@ -125,3 +125,42 @@ async def set_curator_for_groups():
         print(f"updated: {cur.rowcount}")
     finally:
         await db.close()
+
+# щбновление учителей
+async def set_teacher_for_groups():
+    db = await get_db()
+    teacher_by_group = {
+        2: 340448698,   # Ваня
+        4: 340448698,   # Ваня
+        5: 207253276,   # Вова
+        6: 340448698,   # Ваня
+        7: 340448698,   # Ваня
+        8: 207253276,   # Вова
+        9: 207253276,   # Вова
+        10: 208225773,  # Рома
+        11: 208225773,  # Рома
+        12: 340448698,  # Ваня
+        13: 340448698,  # Ваня
+        16: 207253276,  # Вова
+        17: 207253276,  # Вова
+        18: 207253276,  # Вова
+        19: 208225773,  # Рома
+        23: 207253276,  # Вова
+        24: 340448698,  # Ваня
+        25: 207253276,  # Вова
+        26: 207253276,  # Вова
+    }
+    updated = 0
+    try:
+        for group_number, teacher_id in teacher_by_group.items():
+            cur = await db.execute(
+                """ UPDATE chat_groups SET teacher_id = ?
+                WHERE title LIKE ?
+                """,
+                (teacher_id, f"%группа {group_number}%")
+            )
+            updated += cur.rowcount
+        await db.commit()
+        print(f"Всего обновлено: {updated}")
+    finally:
+        await db.close()
