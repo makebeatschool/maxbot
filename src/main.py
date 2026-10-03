@@ -1,6 +1,7 @@
 import asyncio
 from core.bot import bot, dp
 
+import core.routers
 import handlers.messages
 import handlers.start
 import handlers.callbacks
@@ -10,7 +11,6 @@ import handlers.blocked
 
 from db.database import init_db
 # from db.migrations import reset_notify_for_parent_groups
-# from db.migrations import set_curator_for_groups
 from services.reminder import reminder_worker
 from services.preload_file import preload_file
 from db.database import save_all_tables_to_file
@@ -30,14 +30,20 @@ async def main():
         await dp.stop_polling()
         await bot.session.close()
 
+async def write_backup():
+    try:
+        await save_all_tables_to_file()
+        print("write file is done")
+    except: print("not write file")
+
 if __name__ == "__main__":
+    asyncio.run(write_backup())
     try:
         print("Bot started...")
         asyncio.run(main())
     except KeyboardInterrupt:
-        print("Bot stopped")
-    # это для записи всей бд в джисон и просмтора что там есть
-    asyncio.run(save_all_tables_to_file())
+        print("Bot stopped")    
+    asyncio.run(write_backup())
 
 
 # ======= тз-да-похуй-но-надо =========

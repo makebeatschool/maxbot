@@ -1,4 +1,3 @@
-from core.bot import router
 from keyboards.calendar import open_weekdays_keyboard, time_keyboard, weekdays_keyboard, open_time_keyboard
 from maxapi import F
 from services.db_services.lesson_service import set_reminder_time
@@ -7,19 +6,21 @@ from texts import LS_KID_SCENARIO, LS_PARENT_SCENARIO
 from services.db_services.users_service import get_user_or_none
 from handlers.scenario.parent_scenario import parent_steps_after_date
 from handlers.scenario.kid_scenario import kid_steps_after_date
+from maxapi import Router
 
+calendar_router = Router()
 
-@router.message_callback(F.callback.payload == "change_weekday")
+@calendar_router.message_callback(F.callback.payload == "change_weekday")
 async def open_weekdays(event):
     await event.bot.send_message( chat_id=event.chat.chat_id,
             text="Выберите день недели",attachments=[weekdays_keyboard()] )
-@router.message_callback(F.callback.payload == "change_time")
+@calendar_router.message_callback(F.callback.payload == "change_time")
 async def open_time(event):
     await event.bot.send_message( chat_id=event.chat.chat_id,
             text="Выберите время", attachments=[time_keyboard()] )
 
 
-@router.message_callback(F.callback.payload.startswith("weekday:"))
+@calendar_router.message_callback(F.callback.payload.startswith("weekday:"))
 async def weekday(event):
     parts = event.callback.payload.split(":")
     if len(parts) != 2: return
@@ -39,7 +40,7 @@ async def weekday(event):
         await event.bot.send_message( chat_id=event.chat.chat_id,
             text=text, attachments=[time_keyboard()])
 
-@router.message_callback(F.callback.payload.startswith("time:"))
+@calendar_router.message_callback(F.callback.payload.startswith("time:"))
 async def time(event):
     parts = event.callback.payload.split(":")
     if len(parts) != 3 and len(parts) != 2: return

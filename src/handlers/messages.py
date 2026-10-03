@@ -1,12 +1,13 @@
 from maxapi.types import MessageCreated
-from core.bot import router
-from texts import TEXT_START_BTN, CHECK_LIST
 from handlers.group_work import on_group_message
 from handlers.callbacks import on_contact
 
 import os, json
 from datetime import datetime
 from config import PARENT_DIR
+from maxapi import Router
+
+message_router = Router()
 LOG_PATH = os.path.join(PARENT_DIR, "events.log")
 
 def log_event(event):
@@ -21,7 +22,7 @@ def log_event(event):
     with open(LOG_PATH, "a", encoding="utf-8") as f:
         f.write(json.dumps(data, ensure_ascii=False) + "\n")
 
-@router.message_created()
+@message_router.message_created()
 async def on_message(event: MessageCreated):
     # log_event(event)
     if event.chat.type == "dialog":

@@ -3,5 +3,5 @@ from maxapi import Bot, Dispatcher, Router
 
 bot = Bot(TOKEN)
 dp = Dispatcher()
-router = Router()
-dp.include_routers(router)
+# router = Router()
+# dp.include_routers(router)
