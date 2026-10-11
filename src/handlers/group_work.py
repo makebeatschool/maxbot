@@ -85,7 +85,7 @@ async def on_user_added(event: UserAdded):
             return
         if user.user_id in MANAGERS_ID: return
     except: pass
-    await hello_user(event, event.user)
+    # await hello_user(event, event.user)
     
 @dp.user_removed()
 async def on_user_removed(event):

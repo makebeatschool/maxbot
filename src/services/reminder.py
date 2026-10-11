@@ -15,8 +15,8 @@ async def reminder_worker(bot):
             now = datetime.now(MOSCOW)
             await process_trial_reminders(bot, now)
             await process_lesson_reminders(bot, now)
-            await process_group_reminders(bot, now)
-            await process_group_homework(bot, now)
+            # await process_group_reminders(bot, now)
+            # await process_group_homework(bot, now)
             await send_tg_report(now)
         except Exception as e:
             print(f"Ошибка reminder_worker: {e}")
